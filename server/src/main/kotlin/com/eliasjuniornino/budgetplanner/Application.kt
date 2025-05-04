@@ -58,7 +58,7 @@ fun Application.module() {
                     null
                 }
             }
-            challenge { defaultScheme, realm ->
+            challenge { _, _ ->
                 call.respond(
                     HttpStatusCode.Unauthorized,
                     hashMapOf("message" to "Token is not valid or has expired")

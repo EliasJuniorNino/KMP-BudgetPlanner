@@ -8,7 +8,6 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.javatime.datetime
 import java.time.LocalDateTime
-import java.util.*
 import com.eliasjuniornino.budgetplanner.utils.getCurrentLocalDateTime
 
 @Serializable
