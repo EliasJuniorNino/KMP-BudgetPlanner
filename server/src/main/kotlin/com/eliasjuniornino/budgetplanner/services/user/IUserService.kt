@@ -1,7 +1,7 @@
-package com.eliasjuniornino.budgetplanner.services.expenses
+package com.eliasjuniornino.budgetplanner.services.user
 
 import com.eliasjuniornino.budgetplanner.dto.dashboard.ResumeWalletReturnDTO
 
-interface IAuthService {
+interface IUserService {
     fun getExpenses(): ResumeWalletReturnDTO
 }

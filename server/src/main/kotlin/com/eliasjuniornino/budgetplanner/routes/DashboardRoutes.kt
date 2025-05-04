@@ -6,7 +6,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.response.*
 
 fun Route.getDashboardRoutes() {
-  get("/dashboard/wallet-resume") {
-    call.respond(DashboardController(DashboardService()).getDashboardResume())
-  }
+    get("/dashboard/wallet-resume") {
+        call.respond(DashboardController(DashboardService()).getDashboardResume())
+    }
 }
