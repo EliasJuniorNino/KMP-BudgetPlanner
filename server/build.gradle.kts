@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.postgresql)
     implementation(libs.h2)
+    implementation(libs.jbcrypt)
     implementation(libs.exposed.core)
     implementation(libs.exposed.jdbc)
     implementation(libs.exposed.dao)

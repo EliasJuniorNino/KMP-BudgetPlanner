@@ -1,5 +1,6 @@
 package com.eliasjuniornino.budgetplanner.repositories.expenses
 
+import com.eliasjuniornino.budgetplanner.models.CreateExpenseModel
 import com.eliasjuniornino.budgetplanner.models.ExpenseModel
 
 class ExpensesRepository() : IExpensesRepository {
@@ -7,7 +8,7 @@ class ExpensesRepository() : IExpensesRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun store(userId: Int, data: ExpenseModel): ExpenseModel {
+    override suspend fun store(userId: Int, data: CreateExpenseModel): ExpenseModel {
         TODO("Not yet implemented")
     }
 

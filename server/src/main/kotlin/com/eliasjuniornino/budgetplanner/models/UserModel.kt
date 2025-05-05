@@ -1,14 +1,21 @@
 package com.eliasjuniornino.budgetplanner.models
 
-import kotlinx.serialization.Serializable
+import com.eliasjuniornino.budgetplanner.dto.user.UserDTO
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 
-@Serializable
 data class UserModel(
     val id: Int,
+    var name: String,
+    val email: String,
+    val password: String
+) {
+    fun toDTO() = UserDTO(id, name, email)
+}
+
+data class CreateUserModel(
     var name: String,
     val email: String,
     var password: String

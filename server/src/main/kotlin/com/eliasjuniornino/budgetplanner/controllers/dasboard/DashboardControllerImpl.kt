@@ -3,7 +3,7 @@ package com.eliasjuniornino.budgetplanner.controllers.dasboard
 import com.eliasjuniornino.budgetplanner.dto.dashboard.ResumeWalletReturnDTO
 import com.eliasjuniornino.budgetplanner.repositories.dashboard.DashboardRepository
 
-class DashboardController(
+class DashboardControllerImpl(
     private val dashboardService: DashboardRepository
 ) {
     fun getDashboardResume(): ResumeWalletReturnDTO {

@@ -7,6 +7,6 @@ import io.ktor.server.response.*
 fun Route.getUserRoutes() {
     get("/user") {
         val user = getAuthenticatedUserOrRespondError() ?: return@get
-        call.respond(user)
+        call.respond(user.toDTO())
     }
 }

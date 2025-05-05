@@ -1,17 +1,14 @@
 package com.eliasjuniornino.budgetplanner.models
 
-import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 
-@Serializable
 enum class IncomeType {
     Simple
 }
 
-@Serializable
 enum class IncomeFrequencyType {
     UNIQUE,
     DAILY,
@@ -22,7 +19,6 @@ enum class IncomeFrequencyType {
     MONTHS_OF_YEAR
 }
 
-@Serializable
 data class IncomeModel(
     val userId: Int,
 

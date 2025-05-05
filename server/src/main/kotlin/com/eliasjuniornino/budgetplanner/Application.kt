@@ -5,7 +5,6 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.eliasjuniornino.budgetplanner.repositories.users.UsersRepository
 import com.eliasjuniornino.budgetplanner.routes.*
 import io.ktor.http.*
-import kotlinx.serialization.json.Json
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -61,13 +60,7 @@ fun Application.module() {
 
     val usersRepository = UsersRepository()
 
-    install(ContentNegotiation) {
-        json(Json {
-            prettyPrint = true
-            isLenient = true
-        })
-    }
-
+    install(ContentNegotiation) { json() }
     install(Authentication) {
         jwt("auth-jwt") {
             realm = appConfigJWT.jwtRealm
@@ -95,8 +88,8 @@ fun Application.module() {
     }
 
     routing {
-        route("api/v1") {
-            getAuthRoutes()
+        getAuthRoutes()
+        route("api") {
             authenticate("auth-jwt") {
                 getCategoriesRoutes()
                 getDashboardRoutes()

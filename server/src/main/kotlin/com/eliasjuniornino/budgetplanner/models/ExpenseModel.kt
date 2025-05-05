@@ -1,7 +1,6 @@
 package com.eliasjuniornino.budgetplanner.models
 
 import com.eliasjuniornino.budgetplanner.utils.LocalDateTimeSerializer
-import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -10,27 +9,27 @@ import org.jetbrains.exposed.sql.javatime.datetime
 import java.time.LocalDateTime
 import com.eliasjuniornino.budgetplanner.utils.getCurrentLocalDateTime
 
-@Serializable
 enum class ExpenseType {
     UNIQUE, FREQUENCY, PARCEL
 }
 
-@Serializable
 enum class FrequencyType {
     UNIQUE, DAILY, WEEKLY, MONTHLY, YEARLY, DAYS_OF_WEEK, MONTHS_OF_YEAR, EACH_TWO_MONTHS
 }
 
-@Serializable
 data class ExpenseModel(
-    val userId: Int,
+    val id: Int,
+    val data: CreateExpenseModel
+)
 
-    val id: Int = 0,
+data class CreateExpenseModel(
+    val userId: Int,
     var name: String,
     var expenseType: ExpenseType,
     var value: Double = 0.0,
     var valueMultiplier: Double? = 1.0,
-    var categoryId: Long? = null,
-    var subCategoryId: Long? = null,
+    var categoryId: Int? = null,
+    var subCategoryId: Int? = null,
     var isEssential: Boolean = false,
     var description: String? = null,
     var parcelCurrent: Int? = null,
@@ -38,14 +37,9 @@ data class ExpenseModel(
     var frequencyType: FrequencyType? = null,
     var frequencyValue: String? = null,
     var isDone: Boolean = false,
-
-    @Serializable(with = LocalDateTimeSerializer::class)
     var date: LocalDateTime = getCurrentLocalDateTime(),
-    @Serializable(with = LocalDateTimeSerializer::class)
     var dateStart: LocalDateTime = getCurrentLocalDateTime(),
-    @Serializable(with = LocalDateTimeSerializer::class)
     var createdAt: LocalDateTime = getCurrentLocalDateTime(),
-    @Serializable(with = LocalDateTimeSerializer::class)
     var updatedAt: LocalDateTime = getCurrentLocalDateTime(),
 )
 
@@ -56,8 +50,8 @@ object ExpenseTable : IntIdTable("expense") {
     val expenseType = enumerationByName("expense_type", 20, ExpenseType::class)
     val value = double("value").default(0.0)
     val valueMultiplier = double("value_multiplier").nullable()
-    val categoryId = long("category_id").nullable()
-    val subCategoryId = long("sub_category_id").nullable()
+    val categoryId = integer("category_id").nullable()
+    val subCategoryId = integer("sub_category_id").nullable()
     val isEssential = bool("is_essential").default(false)
     val description = varchar("description", 255).nullable()
     val parcelCurrent = integer("parcel_current").nullable()
@@ -96,24 +90,25 @@ class ExpenseDAO(id: EntityID<Int>) : IntEntity(id) {
 }
 
 fun daoToModel(dao: ExpenseDAO) = ExpenseModel(
-    userId = 0,
-
     id = dao.id.value,
-    name = dao.name,
-    expenseType = dao.expenseType,
-    value = dao.value,
-    valueMultiplier = dao.valueMultiplier,
-    categoryId = dao.categoryId,
-    subCategoryId = dao.subCategoryId,
-    isEssential = dao.isEssential,
-    description = dao.description,
-    parcelCurrent = dao.parcelCurrent,
-    parcelTotal = dao.parcelTotal,
-    frequencyType = dao.frequencyType,
-    frequencyValue = dao.frequencyValue,
-    isDone = dao.isDone,
-    date = dao.date,
-    dateStart = dao.dateStart,
-    createdAt = dao.createdAt,
-    updatedAt = dao.updatedAt,
+    data = CreateExpenseModel(
+        userId = 0,
+        name = dao.name,
+        expenseType = dao.expenseType,
+        value = dao.value,
+        valueMultiplier = dao.valueMultiplier,
+        categoryId = dao.categoryId,
+        subCategoryId = dao.subCategoryId,
+        isEssential = dao.isEssential,
+        description = dao.description,
+        parcelCurrent = dao.parcelCurrent,
+        parcelTotal = dao.parcelTotal,
+        frequencyType = dao.frequencyType,
+        frequencyValue = dao.frequencyValue,
+        isDone = dao.isDone,
+        date = dao.date,
+        dateStart = dao.dateStart,
+        createdAt = dao.createdAt,
+        updatedAt = dao.updatedAt,
+    )
 )

@@ -22,6 +22,7 @@ precompose = "1.7.0-alpha01"
 exposed-version = "0.56.0"
 h2-version = "2.3.232"
 postgres-version = "42.7.4"
+jbcrypt-version = "0.4"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -49,6 +50,7 @@ ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = 
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgres-version" }
 h2 = { module = "com.h2database:h2", version.ref = "h2-version" }
+jbcrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrypt-version" }
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed-version" }
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed-version" }
 exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed-version" }
