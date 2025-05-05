@@ -11,7 +11,7 @@ fun Route.getCategoriesRoutes() {
     get("/categories", categoriesController::index)
     post("/categories", categoriesController::create)
     get("/categories/{id}", categoriesController::view)
-    put("/categories/{id}", categoriesController::update)
+    put("/categories", categoriesController::update)
     delete("/categories/{id}", categoriesController::delete)
 
     get("/sub-categories/{id}", categoriesController::indexByCategory)

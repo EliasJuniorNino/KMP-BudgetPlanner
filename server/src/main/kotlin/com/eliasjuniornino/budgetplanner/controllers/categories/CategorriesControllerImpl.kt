@@ -71,7 +71,6 @@ class CategoriesControllerImpl(private val categoriesRepository: CategoriesRepos
     }
 
     override suspend fun update(context: RoutingContext) = context.apply {
-        val categoryId = call.getValidCategoryId() ?: return@apply
         val request = call.receive<UpdateCategoryDTO>()
 
         if (!request.validate()) {
@@ -81,7 +80,7 @@ class CategoriesControllerImpl(private val categoriesRepository: CategoriesRepos
 
         val user = getAuthenticatedUserOrRespondError() ?: return@apply
 
-        val category = categoriesRepository.get(user.id, categoryId)
+        val category = categoriesRepository.get(user.id, request.id)
         if (category == null) {
             call.respond(HttpStatusCode.NotFound, mapOf("message" to "Category not found"))
             return@apply
