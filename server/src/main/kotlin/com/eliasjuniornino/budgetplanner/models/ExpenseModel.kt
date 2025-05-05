@@ -24,29 +24,29 @@ enum class FrequencyType {
 data class ExpenseModel(
     val userId: Int,
 
-    val id: Int? = null,
-    val name: String,
-    val expenseType: ExpenseType,
-    val value: Double = 0.0,
-    val valueMultiplier: Double? = 1.0,
-    val categoryId: Long? = null,
-    val subCategoryId: Long? = null,
-    val isEssential: Boolean = false,
-    val description: String? = null,
-    val parcelCurrent: Int? = null,
-    val parcelTotal: Int? = null,
-    val frequencyType: FrequencyType? = null,
-    val frequencyValue: String? = null,
-    val isDone: Boolean = false,
+    val id: Int = 0,
+    var name: String,
+    var expenseType: ExpenseType,
+    var value: Double = 0.0,
+    var valueMultiplier: Double? = 1.0,
+    var categoryId: Long? = null,
+    var subCategoryId: Long? = null,
+    var isEssential: Boolean = false,
+    var description: String? = null,
+    var parcelCurrent: Int? = null,
+    var parcelTotal: Int? = null,
+    var frequencyType: FrequencyType? = null,
+    var frequencyValue: String? = null,
+    var isDone: Boolean = false,
 
     @Serializable(with = LocalDateTimeSerializer::class)
-    val date: LocalDateTime = getCurrentLocalDateTime(),
+    var date: LocalDateTime = getCurrentLocalDateTime(),
     @Serializable(with = LocalDateTimeSerializer::class)
-    val dateStart: LocalDateTime = getCurrentLocalDateTime(),
+    var dateStart: LocalDateTime = getCurrentLocalDateTime(),
     @Serializable(with = LocalDateTimeSerializer::class)
-    val createdAt: LocalDateTime = getCurrentLocalDateTime(),
+    var createdAt: LocalDateTime = getCurrentLocalDateTime(),
     @Serializable(with = LocalDateTimeSerializer::class)
-    val updatedAt: LocalDateTime = getCurrentLocalDateTime(),
+    var updatedAt: LocalDateTime = getCurrentLocalDateTime(),
 )
 
 object ExpenseTable : IntIdTable("expense") {

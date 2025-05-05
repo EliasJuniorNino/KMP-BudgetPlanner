@@ -1,0 +1,19 @@
+package com.eliasjuniornino.budgetplanner.repositories.users
+
+import com.eliasjuniornino.budgetplanner.models.*
+import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+
+class UsersRepository() : IUsersRepository {
+    override suspend fun findByEmail(email: String): UserModel? = newSuspendedTransaction(Dispatchers.IO) {
+        UserDAO.find { UserTable.email eq email }.firstOrNull()?.let { daoToModel(it) }
+    }
+
+    override suspend fun findByEmailAndPassword(email: String, password: String): UserModel? =
+        newSuspendedTransaction(Dispatchers.IO) {
+            UserDAO
+                .find { (UserTable.email eq email) and (UserTable.password eq password) }
+                .firstOrNull()?.let { daoToModel(it) }
+        }
+}

@@ -1,10 +1,10 @@
-package com.eliasjuniornino.budgetplanner.controllers
+package com.eliasjuniornino.budgetplanner.controllers.dasboard
 
 import com.eliasjuniornino.budgetplanner.dto.dashboard.ResumeWalletReturnDTO
-import com.eliasjuniornino.budgetplanner.services.dashboard.DashboardService
+import com.eliasjuniornino.budgetplanner.repositories.dashboard.DashboardRepository
 
 class DashboardController(
-    private val dashboardService: DashboardService
+    private val dashboardService: DashboardRepository
 ) {
     fun getDashboardResume(): ResumeWalletReturnDTO {
         return ResumeWalletReturnDTO(

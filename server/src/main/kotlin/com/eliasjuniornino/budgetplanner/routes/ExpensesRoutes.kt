@@ -1,20 +1,20 @@
 package com.eliasjuniornino.budgetplanner.routes
 
-import com.eliasjuniornino.budgetplanner.services.dashboard.DashboardService
+import com.eliasjuniornino.budgetplanner.repositories.dashboard.DashboardRepository
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
 
 fun Route.getExpensesRoutes() {
     get("/expenses") {
-        call.respond(DashboardService().getWalletResume())
+        call.respond(DashboardRepository().getWalletResume())
     }
     post("/expenses") {
-        call.respond(DashboardService().getWalletResume())
+        call.respond(DashboardRepository().getWalletResume())
     }
     get("/expenses/{id}") {
-        call.respond(DashboardService().getWalletResume())
+        call.respond(DashboardRepository().getWalletResume())
     }
     delete("/expenses/{id}") {
-        call.respond(DashboardService().getWalletResume())
+        call.respond(DashboardRepository().getWalletResume())
     }
 }

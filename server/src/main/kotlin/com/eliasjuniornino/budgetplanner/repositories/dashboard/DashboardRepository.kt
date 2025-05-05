@@ -1,12 +1,10 @@
-package com.eliasjuniornino.budgetplanner.services.dashboard
+package com.eliasjuniornino.budgetplanner.repositories.dashboard
 
 import com.eliasjuniornino.budgetplanner.dto.dashboard.AIResume
 import com.eliasjuniornino.budgetplanner.dto.dashboard.ExpenseByCategory
 import com.eliasjuniornino.budgetplanner.dto.dashboard.WalletResume
 
-class DashboardService(
-
-) : IDashboardService {
+class DashboardRepository() : IDashboardRepository {
     override fun getWalletResume() = WalletResume(
         totalExpenses = 0.0,
         totalIncomes = 0.0

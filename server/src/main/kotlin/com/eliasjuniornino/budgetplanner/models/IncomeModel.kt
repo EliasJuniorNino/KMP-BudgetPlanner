@@ -26,18 +26,18 @@ enum class IncomeFrequencyType {
 data class IncomeModel(
     val userId: Int,
 
-    val id: Int? = null,
-    val name: String,
-    val incomeType: IncomeType,
-    val value: Double? = 0.0,
-    val valueMultiplier: Double? = 1.0,
-    val icon: String? = null,
-    val categoryId: Long? = null,
-    val subCategoryId: Long? = null,
-    val description: String? = null,
-    val frequencyType: IncomeFrequencyType? = IncomeFrequencyType.UNIQUE,
-    val frequencyValue: String? = null,
-    val isDone: Boolean = false,
+    val id: Int = 0,
+    var name: String,
+    var incomeType: IncomeType,
+    var value: Double? = 0.0,
+    var valueMultiplier: Double? = 1.0,
+    var icon: String? = null,
+    var categoryId: Long? = null,
+    var subCategoryId: Long? = null,
+    var description: String? = null,
+    var frequencyType: IncomeFrequencyType? = IncomeFrequencyType.UNIQUE,
+    var frequencyValue: String? = null,
+    var isDone: Boolean = false,
 )
 
 object IncomeTable : IntIdTable("income") {

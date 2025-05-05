@@ -2,7 +2,7 @@ package com.eliasjuniornino.budgetplanner
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.eliasjuniornino.budgetplanner.dto.auth.AuthLoginDTO
+import com.eliasjuniornino.budgetplanner.repositories.users.UsersRepository
 import com.eliasjuniornino.budgetplanner.routes.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
@@ -14,12 +14,39 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.request.receive
 import io.ktor.server.response.*
-import java.util.Date
 
-fun Application.getEnv(name: String, defaultValue: String): String {
-    return environment.config.propertyOrNull(name)?.getString() ?: defaultValue
+const val SERVER_PORT = 8080
+
+data class AppConfig(
+    var jwtSecret: String,
+    var jwtIssuer: String,
+    var jwtAudience: String,
+    var jwtRealm: String,
+    var jwtTokenTime: Int
+)
+
+fun Application.getEnv(name: String, default: String): String {
+    return environment.config.propertyOrNull(name)?.getString() ?: default
+}
+
+fun Application.getEnv(name: String, default: Int): Int {
+    return environment.config.propertyOrNull(name)?.getString()?.toInt() ?: default
+}
+
+fun Application.getAppConfigJWT(): AppConfig {
+    val jwtSecret = getEnv("jwt.secret", "secret")
+    val jwtIssuer = getEnv("jwt.issuer", "http://0.0.0.0:${SERVER_PORT}/")
+    val jwtAudience = getEnv("jwt.audience", "http://0.0.0.0:${SERVER_PORT}/hello")
+    val jwtRealm = getEnv("jwt.realm", "Access to 'hello'")
+    val jwtTokenTime = getEnv("jwt.tokenTime", 24 * 60 * 60 * 1000)
+    return AppConfig(
+        jwtSecret = jwtSecret,
+        jwtIssuer = jwtIssuer,
+        jwtAudience = jwtAudience,
+        jwtRealm = jwtRealm,
+        jwtTokenTime = jwtTokenTime
+    )
 }
 
 fun main() {
@@ -28,12 +55,11 @@ fun main() {
 }
 
 fun Application.module() {
-    val secret = getEnv("jwt.secret", "secret")
-    val issuer = getEnv("jwt.issuer", "http://0.0.0.0:${SERVER_PORT}/")
-    val audience = getEnv("jwt.audience", "http://0.0.0.0:${SERVER_PORT}/hello")
-    val myRealm = getEnv("jwt.realm", "Access to 'hello'")
+    val appConfigJWT = getAppConfigJWT()
 
     configureDatabase()
+
+    val usersRepository = UsersRepository()
 
     install(ContentNegotiation) {
         json(Json {
@@ -41,22 +67,23 @@ fun Application.module() {
             isLenient = true
         })
     }
+
     install(Authentication) {
         jwt("auth-jwt") {
-            realm = myRealm
+            realm = appConfigJWT.jwtRealm
             verifier(
                 JWT
-                    .require(Algorithm.HMAC256(secret))
-                    .withAudience(audience)
-                    .withIssuer(issuer)
+                    .require(Algorithm.HMAC256(appConfigJWT.jwtSecret))
+                    .withAudience(appConfigJWT.jwtAudience)
+                    .withIssuer(appConfigJWT.jwtIssuer)
                     .build()
             )
             validate { credential ->
-                if (credential.payload.getClaim("email").asString() != "") {
-                    JWTPrincipal(credential.payload)
-                } else {
-                    null
-                }
+                val email: String? = credential.payload.getClaim("email").asString()
+                if (email.isNullOrBlank()) return@validate null
+                val user = usersRepository.findByEmail(email) ?: return@validate null
+                attributes.put(AUTHENTICATED_USER_KEY, user)
+                JWTPrincipal(credential.payload)
             }
             challenge { _, _ ->
                 call.respond(
@@ -69,23 +96,9 @@ fun Application.module() {
 
     routing {
         route("api/v1") {
-            post("/auth/login") {
-                val user = call.receive<AuthLoginDTO>()
-                val token = JWT.create()
-                    .withAudience(audience)
-                    .withIssuer(issuer)
-                    .withClaim("email", user.email)
-                    .withExpiresAt(Date(System.currentTimeMillis() + 60000))
-                    .sign(Algorithm.HMAC256(secret))
-                call.respond(hashMapOf("token" to token))
-            }
-            post("/auth/signup") {
-
-            }
-            get("/auth/logout") {
-
-            }
+            getAuthRoutes()
             authenticate("auth-jwt") {
+                getCategoriesRoutes()
                 getDashboardRoutes()
                 getExpensesRoutes()
                 getIncomesRoutes()

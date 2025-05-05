@@ -8,17 +8,17 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 
 @Serializable
 data class CategoryModel(
-    val userId: Int,
+    var userId: Int,
 
     val id: Int? = null,
-    val name: String,
-    val color: String? = null,
-    val icon: String? = null,
-    val parentId: Long? = null,
+    var name: String,
+    var color: String? = null,
+    var icon: String? = null,
+    var parentId: Long? = null,
 )
 
 object CategoryTable : IntIdTable("category") {
-    val user = reference("user_id", UserTable)
+    val userId = reference("user_id", UserTable)
 
     val name = varchar("category_name", 100)
     val color = varchar("category_color", 30).nullable()
@@ -29,7 +29,7 @@ object CategoryTable : IntIdTable("category") {
 class CategoryDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<CategoryDAO>(CategoryTable)
 
-    var user by UserDAO referencedOn CategoryTable.user
+    var user by UserDAO referencedOn CategoryTable.userId
 
     var name by CategoryTable.name
     var color by CategoryTable.color

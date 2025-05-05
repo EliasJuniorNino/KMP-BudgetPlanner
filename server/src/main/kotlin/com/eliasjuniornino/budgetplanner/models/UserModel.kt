@@ -9,9 +9,9 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 @Serializable
 data class UserModel(
     val id: Int,
-    val name: String,
+    var name: String,
     val email: String,
-    val password: String
+    var password: String
 )
 
 object UserTable : IntIdTable("user") {
