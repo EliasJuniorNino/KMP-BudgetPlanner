@@ -100,7 +100,7 @@ class ExpensesControllerImpl(private val repository: ExpensesRepository) : Expen
         val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
         expense.apply {
-            name = request.name
+            request.name?.let { name = it }
             request.expenseType?.let { expenseType = it }
             request.value?.let { value = it }
             request.valueMultiplier?.let { valueMultiplier = it }

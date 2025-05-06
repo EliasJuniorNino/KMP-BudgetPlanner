@@ -1,20 +1,16 @@
 package com.eliasjuniornino.budgetplanner.routes
 
-import com.eliasjuniornino.budgetplanner.repositories.dashboard.DashboardRepository
+import com.eliasjuniornino.budgetplanner.controllers.incomes.IncomesControllerImpl
+import com.eliasjuniornino.budgetplanner.repositories.incomes.IncomesRepositoryImpl
 import io.ktor.server.routing.*
-import io.ktor.server.response.*
 
 fun Route.getIncomesRoutes() {
-    get("/incomes") {
-        call.respond(DashboardRepository().getWalletResume())
-    }
-    post("/incomes") {
-        call.respond(DashboardRepository().getWalletResume())
-    }
-    get("/incomes/{id}") {
-        call.respond(DashboardRepository().getWalletResume())
-    }
-    delete("/incomes/{id}") {
-        call.respond(DashboardRepository().getWalletResume())
-    }
+    val incomesService = IncomesRepositoryImpl()
+    val incomesController = IncomesControllerImpl(incomesService)
+
+    get("/incomes", incomesController::index)
+    post("/incomes", incomesController::create)
+    get("/incomes/{id}", incomesController::view)
+    put("/incomes", incomesController::update)
+    delete("/incomes/{id}", incomesController::delete)
 }

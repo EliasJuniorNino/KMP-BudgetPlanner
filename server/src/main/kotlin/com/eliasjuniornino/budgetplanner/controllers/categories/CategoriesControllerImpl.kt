@@ -87,10 +87,10 @@ class CategoriesControllerImpl(private val categoriesRepository: CategoriesRepos
         }
 
         category.apply {
-            name = request.name!!
-            color = request.color
-            icon = request.icon
-            parentId = request.parentId
+            request.name?.let { name = it }
+            request.color?.let { color = it }
+            request.icon?.let { icon = it }
+            request.parentId?.let { parentId = it }
         }
 
         val updatedCategory = categoriesRepository.update(user.id, category)

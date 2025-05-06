@@ -9,5 +9,7 @@ data class CategoryDTO(
     val color: String? = null,
     val icon: String? = null,
     val parentId: Int? = null,
+    val createdAt: String,
+    val updatedAt: String
 )
 

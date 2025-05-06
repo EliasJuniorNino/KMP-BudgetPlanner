@@ -1,12 +1,14 @@
 package com.eliasjuniornino.budgetplanner.routes
 
 import com.eliasjuniornino.budgetplanner.controllers.dasboard.DashboardControllerImpl
-import com.eliasjuniornino.budgetplanner.repositories.dashboard.DashboardRepository
+import com.eliasjuniornino.budgetplanner.repositories.dashboard.DashboardRepositoryImpl
 import io.ktor.server.routing.*
-import io.ktor.server.response.*
 
 fun Route.getDashboardRoutes() {
-    get("/dashboard/wallet-resume") {
-        call.respond(DashboardControllerImpl(DashboardRepository()).getDashboardResume())
-    }
+    val dasboardRepository = DashboardRepositoryImpl()
+    val dasboardController = DashboardControllerImpl(dasboardRepository)
+
+    get("/dashboard/ai-resume", dasboardController::getAIResume)
+    get("/dashboard/expenses-by-category", dasboardController::getExpensesByCategory)
+    get("/dashboard/wallet-resume", dasboardController::getWalletResume)
 }

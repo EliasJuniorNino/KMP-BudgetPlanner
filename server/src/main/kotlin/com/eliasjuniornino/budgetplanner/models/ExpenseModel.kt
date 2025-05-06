@@ -7,13 +7,12 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.javatime.datetime
+import org.jetbrains.exposed.sql.javatime.*
 import java.time.LocalDateTime
 import com.eliasjuniornino.budgetplanner.utils.getCurrentLocalDateTime
 
 data class ExpenseModel(
     val id: Int,
-
     val userId: Int,
     var name: String,
     var expenseType: ExpenseType = ExpenseType.UNIQUE,
@@ -29,13 +28,12 @@ data class ExpenseModel(
     var frequencyValue: String? = null,
     var isDone: Boolean = false,
     var date: LocalDateTime = getCurrentLocalDateTime(),
-    var dateStart: LocalDateTime = getCurrentLocalDateTime(),
+    var dateStart: LocalDateTime? = null,
     var createdAt: LocalDateTime = getCurrentLocalDateTime(),
     var updatedAt: LocalDateTime = getCurrentLocalDateTime(),
 ) {
     fun toDTO() = ExpenseDTO(
         id = id,
-        userId = userId,
         name = name,
         expenseType = expenseType,
         value = value,
@@ -72,12 +70,12 @@ data class CreateExpenseModel(
     var frequencyValue: String? = null,
     var isDone: Boolean = false,
     var date: LocalDateTime = getCurrentLocalDateTime(),
-    var dateStart: LocalDateTime = getCurrentLocalDateTime(),
+    var dateStart: LocalDateTime? = null,
     var createdAt: LocalDateTime = getCurrentLocalDateTime(),
     var updatedAt: LocalDateTime = getCurrentLocalDateTime(),
 )
 
-object ExpenseTable : IntIdTable("expense") {
+object ExpenseTable : IntIdTable("expenses") {
     val userId = reference("user_id", UserTable)
 
     val name = varchar("name", 100)
@@ -93,10 +91,10 @@ object ExpenseTable : IntIdTable("expense") {
     val frequencyType = enumerationByName("frequency_type", 30, FrequencyType::class).nullable()
     val frequencyValue = varchar("frequency_value", 50).nullable()
     val isDone = bool("is_done").default(false)
-    val date = datetime("date")
-    val dateStart = datetime("date_start")
-    val createdAt = datetime("created_at")
-    val updatedAt = datetime("updated_at")
+    val date = datetime("date").defaultExpression(CurrentDateTime)
+    val dateStart = datetime("date_start").nullable()
+    val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
+    val updatedAt = datetime("updated_at").defaultExpression(CurrentDateTime)
 }
 
 class ExpenseDAO(id: EntityID<Int>) : IntEntity(id) {

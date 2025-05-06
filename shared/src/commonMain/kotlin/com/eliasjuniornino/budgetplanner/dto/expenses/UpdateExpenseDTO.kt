@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UpdateExpenseDTO(
     val id: Int,
-    val name: String,
+    val name: String? = null,
     val expenseType: ExpenseType? = null,
     val value: Double? = null,
     val valueMultiplier: Double? = null,
@@ -22,6 +22,6 @@ data class UpdateExpenseDTO(
     val dateStart: String? = null,
 ) {
     fun validate(): Boolean {
-        return name.isNotBlank()
+        return id >= 0
     }
 }

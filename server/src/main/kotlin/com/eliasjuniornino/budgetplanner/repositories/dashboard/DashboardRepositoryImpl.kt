@@ -1,0 +1,114 @@
+package com.eliasjuniornino.budgetplanner.repositories.dashboard
+
+import com.eliasjuniornino.budgetplanner.models.AIResumeModel
+import com.eliasjuniornino.budgetplanner.models.ExpenseByCategoryModel
+import com.eliasjuniornino.budgetplanner.models.WalletResumeModel
+import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.IntegerColumnType
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+
+class DashboardRepositoryImpl() : DashboardRepository {
+    override suspend fun getWalletResume(userId: Int): WalletResumeModel =
+        newSuspendedTransaction(Dispatchers.IO) {
+            val query = """
+                SELECT
+                    (SELECT SUM(e.value * e.value_multiplier)
+                     FROM expenses e
+                     WHERE e.user_id = ?) AS total_expenses,
+
+                    (SELECT SUM(i.value * i.value_multiplier)
+                     FROM incomes i
+                     WHERE i.user_id = ?) AS total_incomes
+                """.trimIndent()
+            val args = listOf(
+                IntegerColumnType() to userId,
+                IntegerColumnType() to userId
+            )
+
+            val walletResumeModel = WalletResumeModel(
+                .0,
+                .0
+            )
+
+            exec(stmt = query, args = args) { rs ->
+                while (rs.next()) {
+                    walletResumeModel.apply {
+                        totalExpenses = rs.getDouble("total_expenses")
+                        totalIncomes = rs.getDouble("total_incomes")
+                    }
+                }
+            }
+
+            walletResumeModel
+        }
+
+    override suspend fun getAiResume(userId: Int): AIResumeModel =
+        newSuspendedTransaction(Dispatchers.IO) {
+            AIResumeModel(
+                "Tudo certo por enquanto.",
+                0,
+                0,
+                0
+            )
+        }
+
+    override suspend fun getExpensesByCategory(userId: Int): List<ExpenseByCategoryModel> =
+        newSuspendedTransaction(Dispatchers.IO) {
+            val query = """
+                    SELECT
+                        c.name AS category_name,
+                        c.id AS category_id,
+                        SUM(e.value * e.value_multiplier) AS total,
+                        SUM(e.value * e.value_multiplier) / NULLIF(t.total_sum, 0) * 100 AS percent
+                    FROM expenses e
+                    JOIN categories c ON e.category_id = c.id
+                    JOIN (
+                        SELECT SUM(value * value_multiplier) AS total_sum
+                        FROM expenses
+                        WHERE user_id = ?
+                    ) t ON 1=1
+                    WHERE e.user_id = ?
+                    GROUP BY c.id, c.name, t.total_sum
+
+                    UNION ALL
+
+                    SELECT
+                        'Outros' AS category_name,
+                        NULL AS category_id,
+                        SUM(e.value * e.value_multiplier) AS total,
+                        SUM(e.value * e.value_multiplier) / NULLIF(t.total_sum, 0) * 100 AS percent
+                    FROM expenses e
+                    JOIN (
+                        SELECT SUM(value * value_multiplier) AS total_sum
+                        FROM expenses
+                        WHERE user_id = ?
+                    ) t ON 1=1
+                    WHERE e.user_id = ? AND e.category_id IS NULL
+                    GROUP BY t.total_sum
+                """.trimIndent()
+            val args = listOf(
+                IntegerColumnType() to userId,
+                IntegerColumnType() to userId,
+                IntegerColumnType() to userId,
+                IntegerColumnType() to userId
+            )
+
+            val results = mutableListOf<ExpenseByCategoryModel>()
+
+            exec(stmt = query, args = args) { rs ->
+                while (rs.next()) {
+                    results.add(
+                        ExpenseByCategoryModel(
+                            categoryName = rs.getString("category_name"),
+                            categoryId = rs.getInt("category_id"),
+                            total = rs.getDouble("total"),
+                            percent = rs.getDouble("percent")
+                        )
+                    )
+                }
+            }
+
+            results
+        }
+
+}
