@@ -1,8 +1,7 @@
 package com.eliasjuniornino.budgetplanner
 
 import androidx.compose.runtime.*
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.eliasjuniornino.budgetplanner.repositories.ExpensesRepository
+import com.eliasjuniornino.budgetplanner.repositories.DashboardRepositoryImpl
 import com.eliasjuniornino.budgetplanner.screens.home_screen.HomeScreen
 import com.eliasjuniornino.budgetplanner.screens.home_screen.HomeScreenViewModel
 import moe.tlaster.precompose.PreComposeApp
@@ -27,7 +26,7 @@ fun App() {
             ) {
                 val viewModel = viewModel {
                     HomeScreenViewModel(
-                        expensesRepository = ExpensesRepository()
+                        dashboardRepository = DashboardRepositoryImpl()
                     )
                 }
                 HomeScreen(viewModel = viewModel)
