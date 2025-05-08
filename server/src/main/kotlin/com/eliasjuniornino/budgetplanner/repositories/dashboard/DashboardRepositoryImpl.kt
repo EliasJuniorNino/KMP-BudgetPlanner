@@ -8,9 +8,8 @@ import org.jetbrains.exposed.sql.IntegerColumnType
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class DashboardRepositoryImpl() : DashboardRepository {
-    override suspend fun getWalletResume(userId: Int): WalletResumeModel =
-        newSuspendedTransaction(Dispatchers.IO) {
-            val query = """
+    override suspend fun getWalletResume(userId: Int): WalletResumeModel = newSuspendedTransaction(Dispatchers.IO) {
+        val query = """
                 SELECT
                     (SELECT SUM(e.value * e.value_multiplier)
                      FROM expenses e
@@ -20,37 +19,31 @@ class DashboardRepositoryImpl() : DashboardRepository {
                      FROM incomes i
                      WHERE i.user_id = ?) AS total_incomes
                 """.trimIndent()
-            val args = listOf(
-                IntegerColumnType() to userId,
-                IntegerColumnType() to userId
-            )
+        val args = listOf(
+            IntegerColumnType() to userId, IntegerColumnType() to userId
+        )
 
-            val walletResumeModel = WalletResumeModel(
-                .0,
-                .0
-            )
+        val walletResumeModel = WalletResumeModel(
+            .0, .0
+        )
 
-            exec(stmt = query, args = args) { rs ->
-                while (rs.next()) {
-                    walletResumeModel.apply {
-                        totalExpenses = rs.getDouble("total_expenses")
-                        totalIncomes = rs.getDouble("total_incomes")
-                    }
+        exec(stmt = query, args = args) { rs ->
+            while (rs.next()) {
+                walletResumeModel.apply {
+                    totalExpenses = rs.getDouble("total_expenses")
+                    totalIncomes = rs.getDouble("total_incomes")
                 }
             }
-
-            walletResumeModel
         }
 
-    override suspend fun getAiResume(userId: Int): AIResumeModel =
-        newSuspendedTransaction(Dispatchers.IO) {
-            AIResumeModel(
-                "Tudo certo por enquanto.",
-                0,
-                0,
-                0
-            )
-        }
+        walletResumeModel
+    }
+
+    override suspend fun getAiResume(userId: Int): AIResumeModel = newSuspendedTransaction(Dispatchers.IO) {
+        AIResumeModel(
+            "Tudo certo por enquanto.", 0, 0, 0
+        )
+    }
 
     override suspend fun getExpensesByCategory(userId: Int): List<ExpenseByCategoryModel> =
         newSuspendedTransaction(Dispatchers.IO) {
@@ -61,7 +54,7 @@ class DashboardRepositoryImpl() : DashboardRepository {
                         SUM(e.value * e.value_multiplier) AS total,
                         SUM(e.value * e.value_multiplier) / NULLIF(t.total_sum, 0) * 100 AS percent
                     FROM expenses e
-                    JOIN categories c ON e.category_id = c.id
+                    JOIN expense_categories c ON e.category_id = c.id
                     JOIN (
                         SELECT SUM(value * value_multiplier) AS total_sum
                         FROM expenses
@@ -110,5 +103,4 @@ class DashboardRepositoryImpl() : DashboardRepository {
 
             results
         }
-
 }

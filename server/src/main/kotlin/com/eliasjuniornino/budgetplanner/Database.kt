@@ -3,8 +3,9 @@ package com.eliasjuniornino.budgetplanner
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import com.eliasjuniornino.budgetplanner.models.CategoryTable
+import com.eliasjuniornino.budgetplanner.models.ExpenseCategoryTable
 import com.eliasjuniornino.budgetplanner.models.ExpenseTable
+import com.eliasjuniornino.budgetplanner.models.IncomeCategoryTable
 import com.eliasjuniornino.budgetplanner.models.IncomeTable
 import com.eliasjuniornino.budgetplanner.models.UserTable
 
@@ -22,7 +23,8 @@ fun Application.configureDatabase() {
 
     transaction {
         SchemaUtils.createMissingTablesAndColumns(
-            CategoryTable,
+            ExpenseCategoryTable,
+            IncomeCategoryTable,
             ExpenseTable,
             IncomeTable,
             UserTable

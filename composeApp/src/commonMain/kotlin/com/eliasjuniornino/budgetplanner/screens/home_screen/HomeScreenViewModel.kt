@@ -1,6 +1,8 @@
 package com.eliasjuniornino.budgetplanner.screens.home_screen
 
-import com.eliasjuniornino.budgetplanner.repositories.ExpensesRepository
+import com.eliasjuniornino.budgetplanner.dto.dashboard.ExpenseByCategoryDTO
+import com.eliasjuniornino.budgetplanner.dto.dashboard.WalletResumeDTO
+import com.eliasjuniornino.budgetplanner.repositories.DashboardRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -9,13 +11,16 @@ import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class HomeScreenViewModel(
-    private val expensesRepository: ExpensesRepository
+    private val dashboardRepository: DashboardRepositoryImpl
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeScreenUIState())
     val uiState = _uiState.asStateFlow()
 
-    private val _expensesTotal = MutableStateFlow<Double>(0.0)
-    val expensesTotal = _expensesTotal.asStateFlow()
+    private val _walletResume = MutableStateFlow<WalletResumeDTO?>(null)
+    val walletResume = _walletResume.asStateFlow()
+
+    private val _expensesByCategory = MutableStateFlow<List<ExpenseByCategoryDTO>?>(null)
+    val expensesByCategory = _expensesByCategory.asStateFlow()
 
     init {
         fetchInitialData()
@@ -25,7 +30,7 @@ class HomeScreenViewModel(
         _uiState.update { it.apply { isLoading = true } }
         try {
             viewModelScope.launch {
-                _expensesTotal.value = expensesRepository.getExpensesTotal()
+                _walletResume.value = dashboardRepository.getWalletResume()
             }
         } catch (_: Exception) {
 

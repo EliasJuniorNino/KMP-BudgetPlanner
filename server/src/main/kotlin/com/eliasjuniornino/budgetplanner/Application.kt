@@ -91,9 +91,10 @@ fun Application.module() {
         getAuthRoutes()
         route("api") {
             authenticate("auth-jwt") {
-                getCategoriesRoutes()
                 getDashboardRoutes()
+                getExpenseCategoryRoutes()
                 getExpensesRoutes()
+                getIncomeCategoryRoutes()
                 getIncomesRoutes()
                 getUserRoutes()
             }

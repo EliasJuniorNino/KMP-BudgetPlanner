@@ -1,6 +1,6 @@
 package com.eliasjuniornino.budgetplanner.models
 
-import com.eliasjuniornino.budgetplanner.dto.categories.CategoryDTO
+import com.eliasjuniornino.budgetplanner.dto.expense_categories.ExpenseCategoryDTO
 import com.eliasjuniornino.budgetplanner.utils.getCurrentLocalDateTime
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -9,7 +9,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.javatime.*
 import java.time.LocalDateTime
 
-data class CategoryModel(
+data class ExpenseCategoryModel(
     var userId: Int,
     val id: Int,
     var name: String,
@@ -19,14 +19,14 @@ data class CategoryModel(
     var createdAt: LocalDateTime = getCurrentLocalDateTime(),
     var updatedAt: LocalDateTime = getCurrentLocalDateTime(),
 ) {
-    fun toDTO() = CategoryDTO(
+    fun toDTO() = ExpenseCategoryDTO(
         id, name, color, icon, parentId,
         createdAt = createdAt.toString(),
         updatedAt = updatedAt.toString()
     )
 }
 
-data class CreateCategoryModel(
+data class CreateExpenseCategoryModel(
     var userId: Int,
     var name: String,
     var color: String? = null,
@@ -34,9 +34,9 @@ data class CreateCategoryModel(
     var parentId: Int? = null,
 )
 
-object CategoryTable : IntIdTable("categories") {
+object ExpenseCategoryTable : IntIdTable("expense_categories") {
     val userId = reference("user_id", UserTable)
-    val parentId = reference("parent_id", CategoryTable).nullable()
+    val parentId = reference("parent_id", ExpenseCategoryTable).nullable()
 
     val name = varchar("name", 100)
     val color = varchar("color", 30).nullable()
@@ -45,20 +45,20 @@ object CategoryTable : IntIdTable("categories") {
     val updatedAt = datetime("updated_at").defaultExpression(CurrentDateTime)
 }
 
-class CategoryDAO(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<CategoryDAO>(CategoryTable)
+class ExpenseCategoryDAO(id: EntityID<Int>) : IntEntity(id) {
+    companion object : IntEntityClass<ExpenseCategoryDAO>(ExpenseCategoryTable)
 
-    var user by UserDAO referencedOn CategoryTable.userId
-    var parent by CategoryDAO optionalReferencedOn CategoryTable.parentId
+    var user by UserDAO referencedOn ExpenseCategoryTable.userId
+    var parent by ExpenseCategoryDAO optionalReferencedOn ExpenseCategoryTable.parentId
 
-    var name by CategoryTable.name
-    var color by CategoryTable.color
-    var icon by CategoryTable.icon
-    var createdAt by CategoryTable.createdAt
-    var updatedAt by CategoryTable.updatedAt
+    var name by ExpenseCategoryTable.name
+    var color by ExpenseCategoryTable.color
+    var icon by ExpenseCategoryTable.icon
+    var createdAt by ExpenseCategoryTable.createdAt
+    var updatedAt by ExpenseCategoryTable.updatedAt
 }
 
-fun daoToModel(dao: CategoryDAO) = CategoryModel(
+fun daoToModel(dao: ExpenseCategoryDAO) = ExpenseCategoryModel(
     userId = dao.user.id.value,
     parentId = dao.parent?.id?.value,
 

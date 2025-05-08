@@ -41,8 +41,7 @@ class ExpensesRepositoryImpl : ExpensesRepository {
     override suspend fun get(userId: Int, id: Int): ExpenseModel? = newSuspendedTransaction(Dispatchers.IO) {
         ExpenseDAO
             .find { (ExpenseTable.id eq id) and (ExpenseTable.userId eq userId) }
-            .firstOrNull()
-            ?.let { daoToModel(it) }
+            .firstOrNull()?.let { daoToModel(it) }
     }
 
     override suspend fun update(userId: Int, data: ExpenseModel): ExpenseModel =
@@ -86,6 +85,7 @@ class ExpensesRepositoryImpl : ExpensesRepository {
     override suspend fun existsByName(userId: Int, name: String): Boolean = newSuspendedTransaction(Dispatchers.IO) {
         ExpenseDAO
             .find { (ExpenseTable.userId eq userId) and (ExpenseTable.name eq name) }
-            .empty().not()
+            .empty()
+            .not()
     }
 }

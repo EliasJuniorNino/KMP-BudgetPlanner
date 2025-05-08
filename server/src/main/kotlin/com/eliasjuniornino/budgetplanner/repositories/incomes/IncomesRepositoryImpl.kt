@@ -30,12 +30,12 @@ class IncomesRepositoryImpl : IncomesRepository {
             daoToModel(dao)
         }
 
-    override suspend fun get(userId: Int, id: Int): IncomeModel? = newSuspendedTransaction(Dispatchers.IO) {
-        IncomeDAO
-            .find { (IncomeTable.id eq id) and (IncomeTable.userId eq userId) }
-            .firstOrNull()
-            ?.let { daoToModel(it) }
-    }
+    override suspend fun get(userId: Int, id: Int): IncomeModel? =
+        newSuspendedTransaction(Dispatchers.IO) {
+            IncomeDAO
+                .find { (IncomeTable.id eq id) and (IncomeTable.userId eq userId) }
+                .firstOrNull()?.let { daoToModel(it) }
+        }
 
     override suspend fun update(userId: Int, data: IncomeModel): IncomeModel =
         newSuspendedTransaction(Dispatchers.IO) {
@@ -67,9 +67,10 @@ class IncomesRepositoryImpl : IncomesRepository {
         dao != null
     }
 
-    override suspend fun existsByName(userId: Int, name: String): Boolean = newSuspendedTransaction(Dispatchers.IO) {
-        IncomeDAO
-            .find { (IncomeTable.userId eq userId) and (IncomeTable.name eq name) }
-            .empty().not()
-    }
+    override suspend fun existsByName(userId: Int, name: String): Boolean =
+        newSuspendedTransaction(Dispatchers.IO) {
+            IncomeDAO
+                .find { (IncomeTable.userId eq userId) and (IncomeTable.name eq name) }
+                .empty().not()
+        }
 }
