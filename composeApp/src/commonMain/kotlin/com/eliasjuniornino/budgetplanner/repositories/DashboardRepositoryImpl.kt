@@ -3,20 +3,25 @@ package com.eliasjuniornino.budgetplanner.repositories
 import com.eliasjuniornino.budgetplanner.dto.dashboard.AIResumeDTO
 import com.eliasjuniornino.budgetplanner.dto.dashboard.ExpenseByCategoryDTO
 import com.eliasjuniornino.budgetplanner.dto.dashboard.WalletResumeDTO
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
 
-class DashboardRepositoryImpl : DashboardRepository {
+class DashboardRepositoryImpl(
+    private val client: HttpClient
+) : DashboardRepository {
     override suspend fun getAIResume(): AIResumeDTO {
-        TODO("Not yet implemented")
+        val response: AIResumeDTO = client.get("api/dashboard/ai-resume").body()
+        return response
     }
 
     override suspend fun getExpensesByCategory(): List<ExpenseByCategoryDTO> {
-        return listOf(
-
-        )
+        val response: List<ExpenseByCategoryDTO> = client.get("api/dashboard/expenses-by-category").body()
+        return response
     }
 
-    override suspend fun getWalletResume(): WalletResumeDTO = WalletResumeDTO(
-        88.0,
-        99.0
-    )
+    override suspend fun getWalletResume(): WalletResumeDTO {
+        val response: WalletResumeDTO = client.get("api/dashboard/wallet-resume").body()
+        return response
+    }
 }

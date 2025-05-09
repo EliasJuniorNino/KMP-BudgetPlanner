@@ -1,4 +1,4 @@
-package com.eliasjuniornino.budgetplanner.screens.home_screen.tabs.home_tab
+package com.eliasjuniornino.budgetplanner.screens.home_screen.tabs.incomes_tab
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,19 +7,20 @@ import androidx.compose.runtime.Composable
 import com.eliasjuniornino.budgetplanner.screens.home_screen.HomeScreenViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-@Preview
 @Composable
-fun HomeTab(
+fun IncomesTab(
     viewModel: HomeScreenViewModel,
     innerPadding: PaddingValues
 ) {
-    HomeTabView()
+    IncomesTabView()
 }
 
 @Preview
 @Composable
-fun HomeTabView() {
+fun IncomesTabView(
+
+) {
     Column {
-        Text("HomeTabView")
+        Text("IncomesTabView")
     }
 }

@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class IncomesDTO(
+data class IncomeDTO(
     val id: Int,
     val name: String,
     val incomeType: IncomeType,

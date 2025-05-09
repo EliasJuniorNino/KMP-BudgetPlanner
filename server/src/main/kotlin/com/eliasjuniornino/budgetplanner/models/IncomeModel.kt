@@ -1,7 +1,7 @@
 package com.eliasjuniornino.budgetplanner.models
 
 import com.eliasjuniornino.budgetplanner.dto.incomes.IncomeType
-import com.eliasjuniornino.budgetplanner.dto.incomes.IncomesDTO
+import com.eliasjuniornino.budgetplanner.dto.incomes.IncomeDTO
 import com.eliasjuniornino.budgetplanner.utils.getCurrentLocalDateTime
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -25,7 +25,7 @@ data class IncomeModel(
     val createdAt: LocalDateTime,
     var updatedAt: LocalDateTime,
 ) {
-    fun toDTO() = IncomesDTO(
+    fun toDTO() = IncomeDTO(
         id = id,
         name = name,
         incomeType = incomeType,
