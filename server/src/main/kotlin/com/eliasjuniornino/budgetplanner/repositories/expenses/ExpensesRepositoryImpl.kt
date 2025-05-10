@@ -1,6 +1,11 @@
 package com.eliasjuniornino.budgetplanner.repositories.expenses
 
-import com.eliasjuniornino.budgetplanner.models.*
+import com.eliasjuniornino.budgetplanner.dao.ExpenseDAO
+import com.eliasjuniornino.budgetplanner.dao.ExpenseTable
+import com.eliasjuniornino.budgetplanner.dao.UserDAO
+import com.eliasjuniornino.budgetplanner.dao.daoToModel
+import com.eliasjuniornino.budgetplanner.models.CreateExpenseModel
+import com.eliasjuniornino.budgetplanner.models.ExpenseModel
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction

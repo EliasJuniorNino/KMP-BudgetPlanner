@@ -2,10 +2,10 @@ package com.eliasjuniornino.budgetplanner.repositories.incomes_categories
 
 import com.eliasjuniornino.budgetplanner.models.IncomeCategoryModel
 import com.eliasjuniornino.budgetplanner.models.CreateIncomeCategoryModel
-import com.eliasjuniornino.budgetplanner.models.IncomeCategoryDAO
-import com.eliasjuniornino.budgetplanner.models.IncomeCategoryTable
-import com.eliasjuniornino.budgetplanner.models.UserDAO
-import com.eliasjuniornino.budgetplanner.models.daoToModel
+import com.eliasjuniornino.budgetplanner.dao.IncomeCategoryDAO
+import com.eliasjuniornino.budgetplanner.dao.IncomeCategoryTable
+import com.eliasjuniornino.budgetplanner.dao.UserDAO
+import com.eliasjuniornino.budgetplanner.dao.daoToModel
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction

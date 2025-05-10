@@ -2,10 +2,10 @@ package com.eliasjuniornino.budgetplanner.repositories.expenses_categories
 
 import com.eliasjuniornino.budgetplanner.models.ExpenseCategoryModel
 import com.eliasjuniornino.budgetplanner.models.CreateExpenseCategoryModel
-import com.eliasjuniornino.budgetplanner.models.ExpenseCategoryDAO
-import com.eliasjuniornino.budgetplanner.models.ExpenseCategoryTable
-import com.eliasjuniornino.budgetplanner.models.UserDAO
-import com.eliasjuniornino.budgetplanner.models.daoToModel
+import com.eliasjuniornino.budgetplanner.dao.ExpenseCategoryDAO
+import com.eliasjuniornino.budgetplanner.dao.ExpenseCategoryTable
+import com.eliasjuniornino.budgetplanner.dao.UserDAO
+import com.eliasjuniornino.budgetplanner.dao.daoToModel
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction

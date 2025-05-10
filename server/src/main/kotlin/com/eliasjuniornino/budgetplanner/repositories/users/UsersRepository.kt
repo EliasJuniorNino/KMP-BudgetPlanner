@@ -1,6 +1,10 @@
 package com.eliasjuniornino.budgetplanner.repositories.users
 
-import com.eliasjuniornino.budgetplanner.models.*
+import com.eliasjuniornino.budgetplanner.models.CreateUserModel
+import com.eliasjuniornino.budgetplanner.models.UserModel
+import com.eliasjuniornino.budgetplanner.dao.UserDAO
+import com.eliasjuniornino.budgetplanner.dao.UserTable
+import com.eliasjuniornino.budgetplanner.dao.daoToModel
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction

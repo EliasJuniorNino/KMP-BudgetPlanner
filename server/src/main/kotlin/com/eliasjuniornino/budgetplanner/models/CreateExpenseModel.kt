@@ -1,13 +1,11 @@
 package com.eliasjuniornino.budgetplanner.models
 
-import com.eliasjuniornino.budgetplanner.dto.expenses.ExpenseDTO
 import com.eliasjuniornino.budgetplanner.dto.expenses.ExpenseType
 import com.eliasjuniornino.budgetplanner.dto.expenses.FrequencyType
-import java.time.LocalDateTime
 import com.eliasjuniornino.budgetplanner.utils.getCurrentLocalDateTime
+import java.time.LocalDateTime
 
-data class ExpenseModel(
-    val id: Int,
+data class CreateExpenseModel(
     val userId: Int,
     var name: String,
     var expenseType: ExpenseType = ExpenseType.UNIQUE,
@@ -26,25 +24,4 @@ data class ExpenseModel(
     var dateStart: LocalDateTime? = null,
     var createdAt: LocalDateTime = getCurrentLocalDateTime(),
     var updatedAt: LocalDateTime = getCurrentLocalDateTime(),
-) {
-    fun toDTO() = ExpenseDTO(
-        id = id,
-        name = name,
-        expenseType = expenseType,
-        value = value,
-        valueMultiplier = valueMultiplier,
-        categoryId = categoryId,
-        subCategoryId = subCategoryId,
-        isEssential = isEssential,
-        description = description,
-        parcelCurrent = parcelCurrent,
-        parcelTotal = parcelTotal,
-        frequencyType = frequencyType,
-        frequencyValue = frequencyValue,
-        isDone = isDone,
-        date = date.toString(),
-        dateStart = dateStart.toString(),
-        createdAt = createdAt.toString(),
-        updatedAt = updatedAt.toString()
-    )
-}
+)
