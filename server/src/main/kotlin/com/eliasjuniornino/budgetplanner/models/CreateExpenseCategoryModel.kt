@@ -1,7 +1,6 @@
 package com.eliasjuniornino.budgetplanner.models
 
 data class CreateExpenseCategoryModel(
-    var userId: Int,
     var accountId: Int,
     var name: String,
     var color: String? = null,

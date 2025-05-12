@@ -12,11 +12,12 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import java.time.LocalDateTime
 
 class IncomesRepositoryImpl : IncomesRepository {
-    override suspend fun list(accountId: Int): List<IncomeModel> = newSuspendedTransaction(Dispatchers.IO) {
-        IncomeDAO
-            .find { IncomeTable.accountId eq accountId }
-            .map { daoToModel(it) }
-    }
+    override suspend fun list(accountId: Int): List<IncomeModel> =
+        newSuspendedTransaction(Dispatchers.IO) {
+            IncomeDAO
+                .find { IncomeTable.accountId eq accountId }
+                .map { daoToModel(it) }
+        }
 
     override suspend fun store(accountId: Int, data: CreateIncomeModel): IncomeModel =
         newSuspendedTransaction(Dispatchers.IO) {
@@ -63,14 +64,15 @@ class IncomesRepositoryImpl : IncomesRepository {
             daoToModel(dao)
         }
 
-    override suspend fun delete(accountId: Int, id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
-        val dao = IncomeDAO
-            .find { (IncomeTable.id eq id) and (IncomeTable.accountId eq accountId) }
-            .firstOrNull()
+    override suspend fun delete(accountId: Int, id: Int): Boolean =
+        newSuspendedTransaction(Dispatchers.IO) {
+            val dao = IncomeDAO
+                .find { (IncomeTable.id eq id) and (IncomeTable.accountId eq accountId) }
+                .firstOrNull()
 
-        dao?.delete()
-        dao != null
-    }
+            dao?.delete()
+            dao != null
+        }
 
     override suspend fun existsByName(accountId: Int, name: String): Boolean =
         newSuspendedTransaction(Dispatchers.IO) {

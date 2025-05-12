@@ -3,7 +3,7 @@ package com.eliasjuniornino.budgetplanner
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.eliasjuniornino.budgetplanner.database.configureDatabase
-import com.eliasjuniornino.budgetplanner.repositories.users.UsersRepository
+import com.eliasjuniornino.budgetplanner.repositories.users.UsersRepositoryImpl
 import com.eliasjuniornino.budgetplanner.routes.*
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -59,7 +59,7 @@ fun Application.module() {
 
     configureDatabase()
 
-    val usersRepository = UsersRepository()
+    val usersRepository = UsersRepositoryImpl()
 
     install(ContentNegotiation) { json() }
     install(Authentication) {

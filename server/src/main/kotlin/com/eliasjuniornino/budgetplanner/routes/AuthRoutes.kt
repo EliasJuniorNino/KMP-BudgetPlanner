@@ -3,7 +3,7 @@ package com.eliasjuniornino.budgetplanner.routes
 import com.eliasjuniornino.budgetplanner.dto.auth.AuthLoginDTO
 import com.eliasjuniornino.budgetplanner.dto.auth.AuthSignupDTO
 import com.eliasjuniornino.budgetplanner.getAppConfigJWT
-import com.eliasjuniornino.budgetplanner.repositories.users.UsersRepository
+import com.eliasjuniornino.budgetplanner.repositories.users.UsersRepositoryImpl
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.eliasjuniornino.budgetplanner.models.CreateUserModel
@@ -16,7 +16,7 @@ import java.util.*
 
 fun Route.getAuthRoutes() {
     val appConfigJWT = application.getAppConfigJWT()
-    val usersRepository = UsersRepository()
+    val usersRepository = UsersRepositoryImpl()
 
     route("/auth") {
         post("/login") {

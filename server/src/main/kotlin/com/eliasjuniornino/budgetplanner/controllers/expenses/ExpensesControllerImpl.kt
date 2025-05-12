@@ -2,36 +2,29 @@ package com.eliasjuniornino.budgetplanner.controllers.expenses
 
 import com.eliasjuniornino.budgetplanner.dto.expenses.CreateExpenseDTO
 import com.eliasjuniornino.budgetplanner.dto.expenses.UpdateExpenseDTO
-import com.eliasjuniornino.budgetplanner.getAuthenticatedUserOrRespondError
+import com.eliasjuniornino.budgetplanner.getAccountOrRespondError
+import com.eliasjuniornino.budgetplanner.getValidIdOrRespondError
 import com.eliasjuniornino.budgetplanner.models.CreateExpenseModel
 import com.eliasjuniornino.budgetplanner.repositories.expenses.ExpensesRepository
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-private suspend fun ApplicationCall.getValidIdOrRespondError(): Int? {
-    return parameters["id"]?.toIntOrNull() ?: run {
-        respond(HttpStatusCode.BadRequest, mapOf("message" to "Invalid or missing ID"))
-        null
-    }
-}
-
 class ExpensesControllerImpl(private val repository: ExpensesRepository) : ExpensesController {
     override suspend fun index(context: RoutingContext) = context.apply {
-        val user = getAuthenticatedUserOrRespondError() ?: return@apply
-        val expenses = repository.list(user.id)
+        val account = getAccountOrRespondError() ?: return@apply
+        val expenses = repository.list(account.id)
         call.respond(expenses.map { it.toDTO() })
     }
 
     override suspend fun view(context: RoutingContext) = context.apply {
         val id = call.getValidIdOrRespondError() ?: return@apply
-        val user = getAuthenticatedUserOrRespondError() ?: return@apply
+        val account = getAccountOrRespondError() ?: return@apply
 
-        val expense = repository.get(user.id, id)
+        val expense = repository.get(account.id, id)
         if (expense == null) {
             call.respond(HttpStatusCode.NotFound, mapOf("message" to "Expense not found"))
         } else {
@@ -46,9 +39,9 @@ class ExpensesControllerImpl(private val repository: ExpensesRepository) : Expen
             return@apply
         }
 
-        val user = getAuthenticatedUserOrRespondError() ?: return@apply
+        val account = getAccountOrRespondError() ?: return@apply
 
-        if (repository.existsByName(user.id, request.name)) {
+        if (repository.existsByName(account.id, request.name)) {
             call.respond(HttpStatusCode.Conflict, mapOf("message" to "Expense with this name already exists"))
             return@apply
         }
@@ -57,7 +50,7 @@ class ExpensesControllerImpl(private val repository: ExpensesRepository) : Expen
         val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
         val newExpense = CreateExpenseModel(
-            accountId = user.id,
+            accountId = account.id,
             name = request.name,
             expenseType = request.expenseType,
             value = request.value,
@@ -77,7 +70,7 @@ class ExpensesControllerImpl(private val repository: ExpensesRepository) : Expen
             updatedAt = now,
         )
 
-        val createdExpense = repository.store(user.id, newExpense)
+        val createdExpense = repository.store(account.id, newExpense)
         call.respond(HttpStatusCode.Created, createdExpense.toDTO())
     }
 
@@ -89,9 +82,9 @@ class ExpensesControllerImpl(private val repository: ExpensesRepository) : Expen
             return@apply
         }
 
-        val user = getAuthenticatedUserOrRespondError() ?: return@apply
+        val account = getAccountOrRespondError() ?: return@apply
 
-        val expense = repository.get(user.id, request.id)
+        val expense = repository.get(account.id, request.id)
         if (expense == null) {
             call.respond(HttpStatusCode.NotFound, mapOf("message" to "Expense not found"))
             return@apply
@@ -118,21 +111,21 @@ class ExpensesControllerImpl(private val repository: ExpensesRepository) : Expen
             updatedAt = LocalDateTime.now()
         }
 
-        val updatedExpense = repository.update(user.id, expense)
+        val updatedExpense = repository.update(account.id, expense)
         call.respond(updatedExpense.toDTO())
     }
 
     override suspend fun delete(context: RoutingContext) = context.apply {
         val id = call.getValidIdOrRespondError() ?: return@apply
-        val user = getAuthenticatedUserOrRespondError() ?: return@apply
+        val account = getAccountOrRespondError() ?: return@apply
 
-        val expense = repository.get(user.id, id)
+        val expense = repository.get(account.id, id)
         if (expense == null) {
             call.respond(HttpStatusCode.NotFound, mapOf("message" to "Expense not found"))
             return@apply
         }
 
-        val deleted = repository.delete(user.id, id)
+        val deleted = repository.delete(account.id, id)
         if (!deleted) {
             call.respond(HttpStatusCode.InternalServerError, mapOf("message" to "Error deleting expense"))
         } else {

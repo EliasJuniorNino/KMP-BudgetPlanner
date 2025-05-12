@@ -5,7 +5,7 @@ import com.eliasjuniornino.budgetplanner.models.ExpenseByCategoryModel
 import com.eliasjuniornino.budgetplanner.models.WalletResumeModel
 
 interface DashboardRepository {
-    suspend fun getWalletResume(userId: Int): WalletResumeModel
-    suspend fun getAiResume(userId: Int): AIResumeModel
-    suspend fun getExpensesByCategory(userId: Int): List<ExpenseByCategoryModel>
+    suspend fun getWalletResume(accountId: Int): WalletResumeModel
+    suspend fun getAiResume(accountId: Int): AIResumeModel
+    suspend fun getExpensesByCategory(accountId: Int): List<ExpenseByCategoryModel>
 }

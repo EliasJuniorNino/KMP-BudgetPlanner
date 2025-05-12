@@ -13,9 +13,9 @@ import com.eliasjuniornino.budgetplanner.dao.IncomeTable
 import com.eliasjuniornino.budgetplanner.dao.UserTable
 
 fun Application.configureDatabase() {
-    val url = getEnv("database.url", "jdbc:postgresql://192.168.1.17:5432/budgetnino")
-    val user = getEnv("database.user", "airsoft")
-    val password = getEnv("database.password", "airsoft")
+    val url = getEnv("database.url", "jdbc:postgresql://localhost:5432/budgetplanner")
+    val user = getEnv("database.user", "admin")
+    val password = getEnv("database.password", "admin")
     val environment = getEnv("ENV", "development")
 
     Database.connect(

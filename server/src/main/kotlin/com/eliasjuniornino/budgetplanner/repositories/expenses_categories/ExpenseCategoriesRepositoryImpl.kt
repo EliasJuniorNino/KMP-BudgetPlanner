@@ -45,7 +45,7 @@ class ExpenseCategoriesRepositoryImpl : ExpenseCategoriesRepository {
             ExpenseCategoryDAO
                 .find {
                     (ExpenseCategoryTable.accountId eq accountId) and
-                    (ExpenseCategoryTable.id eq categoryId)
+                            (ExpenseCategoryTable.id eq categoryId)
                 }
                 .firstOrNull()?.let { daoToModel(it) }
         }

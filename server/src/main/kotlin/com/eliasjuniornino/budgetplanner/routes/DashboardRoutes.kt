@@ -5,10 +5,10 @@ import com.eliasjuniornino.budgetplanner.repositories.dashboard.DashboardReposit
 import io.ktor.server.routing.*
 
 fun Route.getDashboardRoutes() {
-    val dasboardRepository = DashboardRepositoryImpl()
-    val dasboardController = DashboardControllerImpl(dasboardRepository)
+    val dashboardRepository = DashboardRepositoryImpl()
+    val dashboardController = DashboardControllerImpl(dashboardRepository)
 
-    get("/dashboard/ai-resume", dasboardController::getAIResume)
-    get("/dashboard/expenses-by-category", dasboardController::getExpensesByCategory)
-    get("/dashboard/wallet-resume", dasboardController::getWalletResume)
+    get("/dashboard/ai-resume", dashboardController::getAIResume)
+    get("/dashboard/expenses-by-category", dashboardController::getExpensesByCategory)
+    get("/dashboard/wallet-resume", dashboardController::getWalletResume)
 }

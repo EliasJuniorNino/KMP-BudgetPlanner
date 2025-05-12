@@ -2,43 +2,36 @@ package com.eliasjuniornino.budgetplanner.controllers.expense_categories
 
 import com.eliasjuniornino.budgetplanner.dto.expense_categories.CreateExpenseCategoryDTO
 import com.eliasjuniornino.budgetplanner.dto.expense_categories.UpdateExpenseCategoryDTO
-import com.eliasjuniornino.budgetplanner.getAuthenticatedUserOrRespondError
+import com.eliasjuniornino.budgetplanner.getAccountOrRespondError
+import com.eliasjuniornino.budgetplanner.getValidIdOrRespondError
 import com.eliasjuniornino.budgetplanner.models.CreateExpenseCategoryModel
 import com.eliasjuniornino.budgetplanner.repositories.expenses_categories.ExpenseCategoriesRepository
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-
-private suspend fun ApplicationCall.getValidCategoryId(): Int? {
-    return parameters["id"]?.toIntOrNull() ?: run {
-        respond(HttpStatusCode.BadRequest, mapOf("message" to "Invalid or missing category ID"))
-        null
-    }
-}
 
 class ExpenseCategoryControllerImpl(
     private val expenseCategoriesRepository: ExpenseCategoriesRepository
 ) : ExpenseCategoryController {
     override suspend fun index(context: RoutingContext) = context.apply {
-        val user = getAuthenticatedUserOrRespondError() ?: return@apply
-        val categories = expenseCategoriesRepository.list(user.id)
+        val account = getAccountOrRespondError() ?: return@apply
+        val categories = expenseCategoriesRepository.list(account.id)
         call.respond(categories.map { it.toDTO() })
     }
 
     override suspend fun indexByCategory(context: RoutingContext) = context.apply {
-        val parentId = call.getValidCategoryId() ?: return@apply
-        val user = getAuthenticatedUserOrRespondError() ?: return@apply
-        val categories = expenseCategoriesRepository.list(user.id, parentId)
+        val parentId = call.getValidIdOrRespondError() ?: return@apply
+        val account = getAccountOrRespondError() ?: return@apply
+        val categories = expenseCategoriesRepository.list(account.id, parentId)
         call.respond(categories.map { it.toDTO() })
     }
 
     override suspend fun view(context: RoutingContext) = context.apply {
-        val categoryId = call.getValidCategoryId() ?: return@apply
-        val user = getAuthenticatedUserOrRespondError() ?: return@apply
+        val categoryId = call.getValidIdOrRespondError() ?: return@apply
+        val account = getAccountOrRespondError() ?: return@apply
 
-        val category = expenseCategoriesRepository.get(user.id, categoryId)
+        val category = expenseCategoriesRepository.get(account.id, categoryId)
         if (category == null) {
             call.respond(HttpStatusCode.NotFound, mapOf("message" to "Category not found"))
         } else {
@@ -53,9 +46,9 @@ class ExpenseCategoryControllerImpl(
             return@apply
         }
 
-        val user = getAuthenticatedUserOrRespondError() ?: return@apply
+        val account = getAccountOrRespondError() ?: return@apply
 
-        if (request.name != null && expenseCategoriesRepository.existsByName(user.id, request.name!!)) {
+        if (request.name != null && expenseCategoriesRepository.existsByName(account.id, request.name!!)) {
             call.respond(
                 HttpStatusCode.Conflict,
                 mapOf("message" to "Category with this name already exists")
@@ -64,14 +57,14 @@ class ExpenseCategoryControllerImpl(
         }
 
         val newCategory = CreateExpenseCategoryModel(
-            accountId = user.id,
+            accountId = account.id,
             name = request.name!!,
             color = request.color,
             icon = request.icon,
             parentId = request.parentId
         )
 
-        val createdCategory = expenseCategoriesRepository.store(user.id, newCategory)
+        val createdCategory = expenseCategoriesRepository.store(account.id, newCategory)
         call.respond(HttpStatusCode.Created, createdCategory.toDTO())
     }
 
@@ -83,9 +76,9 @@ class ExpenseCategoryControllerImpl(
             return@apply
         }
 
-        val user = getAuthenticatedUserOrRespondError() ?: return@apply
+        val account = getAccountOrRespondError() ?: return@apply
 
-        val category = expenseCategoriesRepository.get(user.id, request.id)
+        val category = expenseCategoriesRepository.get(account.id, request.id)
         if (category == null) {
             call.respond(HttpStatusCode.NotFound, mapOf("message" to "Category not found"))
             return@apply
@@ -98,21 +91,21 @@ class ExpenseCategoryControllerImpl(
             request.parentId?.let { parentId = it }
         }
 
-        val updatedCategory = expenseCategoriesRepository.update(user.id, category)
+        val updatedCategory = expenseCategoriesRepository.update(account.id, category)
         call.respond(updatedCategory.toDTO())
     }
 
     override suspend fun delete(context: RoutingContext) = context.apply {
-        val categoryId = call.getValidCategoryId() ?: return@apply
-        val user = getAuthenticatedUserOrRespondError() ?: return@apply
+        val categoryId = call.getValidIdOrRespondError() ?: return@apply
+        val account = getAccountOrRespondError() ?: return@apply
 
-        val category = expenseCategoriesRepository.get(user.id, categoryId)
+        val category = expenseCategoriesRepository.get(account.id, categoryId)
         if (category == null) {
             call.respond(HttpStatusCode.NotFound, mapOf("message" to "Category not found"))
             return@apply
         }
 
-        val deleted = expenseCategoriesRepository.delete(user.id, categoryId)
+        val deleted = expenseCategoriesRepository.delete(account.id, categoryId)
         if (!deleted) {
             call.respond(HttpStatusCode.InternalServerError, mapOf("message" to "Error deleting category"))
         } else {

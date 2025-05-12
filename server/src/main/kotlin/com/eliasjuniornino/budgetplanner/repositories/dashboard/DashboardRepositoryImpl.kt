@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.IntegerColumnType
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class DashboardRepositoryImpl() : DashboardRepository {
-    override suspend fun getWalletResume(userId: Int): WalletResumeModel = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun getWalletResume(accountId: Int): WalletResumeModel = newSuspendedTransaction(Dispatchers.IO) {
         val query = """
                 SELECT
                     (SELECT SUM(e.value * e.value_multiplier)
@@ -20,7 +20,7 @@ class DashboardRepositoryImpl() : DashboardRepository {
                      WHERE i.user_id = ?) AS total_incomes
                 """.trimIndent()
         val args = listOf(
-            IntegerColumnType() to userId, IntegerColumnType() to userId
+            IntegerColumnType() to accountId, IntegerColumnType() to accountId
         )
 
         val walletResumeModel = WalletResumeModel(
@@ -39,13 +39,13 @@ class DashboardRepositoryImpl() : DashboardRepository {
         walletResumeModel
     }
 
-    override suspend fun getAiResume(userId: Int): AIResumeModel = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun getAiResume(accountId: Int): AIResumeModel = newSuspendedTransaction(Dispatchers.IO) {
         AIResumeModel(
             "Tudo certo por enquanto.", 0, 0, 0
         )
     }
 
-    override suspend fun getExpensesByCategory(userId: Int): List<ExpenseByCategoryModel> =
+    override suspend fun getExpensesByCategory(accountId: Int): List<ExpenseByCategoryModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             val query = """
                     SELECT
@@ -58,9 +58,9 @@ class DashboardRepositoryImpl() : DashboardRepository {
                     JOIN (
                         SELECT SUM(value * value_multiplier) AS total_sum
                         FROM expenses
-                        WHERE user_id = ?
+                        WHERE account_id = ?
                     ) t ON 1=1
-                    WHERE e.user_id = ?
+                    WHERE e.account_id = ?
                     GROUP BY c.id, c.name, t.total_sum
 
                     UNION ALL
@@ -74,16 +74,16 @@ class DashboardRepositoryImpl() : DashboardRepository {
                     JOIN (
                         SELECT SUM(value * value_multiplier) AS total_sum
                         FROM expenses
-                        WHERE user_id = ?
+                        WHERE account_id = ?
                     ) t ON 1=1
-                    WHERE e.user_id = ? AND e.category_id IS NULL
+                    WHERE e.account_id = ? AND e.category_id IS NULL
                     GROUP BY t.total_sum
                 """.trimIndent()
             val args = listOf(
-                IntegerColumnType() to userId,
-                IntegerColumnType() to userId,
-                IntegerColumnType() to userId,
-                IntegerColumnType() to userId
+                IntegerColumnType() to accountId,
+                IntegerColumnType() to accountId,
+                IntegerColumnType() to accountId,
+                IntegerColumnType() to accountId
             )
 
             val results = mutableListOf<ExpenseByCategoryModel>()

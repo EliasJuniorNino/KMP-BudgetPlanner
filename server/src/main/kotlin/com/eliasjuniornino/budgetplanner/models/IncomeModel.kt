@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 data class IncomeModel(
     val id: Int = 0,
+    val userId: Int,
     val accountId: Int,
     var name: String,
     var incomeType: IncomeType = IncomeType.SIMPLE,
