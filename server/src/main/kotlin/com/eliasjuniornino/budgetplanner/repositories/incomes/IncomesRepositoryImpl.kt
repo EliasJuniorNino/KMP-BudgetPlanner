@@ -2,7 +2,7 @@ package com.eliasjuniornino.budgetplanner.repositories.incomes
 
 import com.eliasjuniornino.budgetplanner.models.CreateIncomeModel
 import com.eliasjuniornino.budgetplanner.models.IncomeModel
-import com.eliasjuniornino.budgetplanner.dao.UserDAO
+import com.eliasjuniornino.budgetplanner.dao.AccountDAO
 import com.eliasjuniornino.budgetplanner.dao.IncomeDAO
 import com.eliasjuniornino.budgetplanner.dao.IncomeTable
 import com.eliasjuniornino.budgetplanner.dao.daoToModel
@@ -12,16 +12,16 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import java.time.LocalDateTime
 
 class IncomesRepositoryImpl : IncomesRepository {
-    override suspend fun list(userId: Int): List<IncomeModel> = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun list(accountId: Int): List<IncomeModel> = newSuspendedTransaction(Dispatchers.IO) {
         IncomeDAO
-            .find { IncomeTable.userId eq userId }
+            .find { IncomeTable.accountId eq accountId }
             .map { daoToModel(it) }
     }
 
-    override suspend fun store(userId: Int, data: CreateIncomeModel): IncomeModel =
+    override suspend fun store(accountId: Int, data: CreateIncomeModel): IncomeModel =
         newSuspendedTransaction(Dispatchers.IO) {
             val dao = IncomeDAO.new {
-                this.user = UserDAO[userId]
+                this.account = AccountDAO[accountId]
                 this.name = data.name
                 this.incomeType = data.incomeType
                 this.value = data.value
@@ -35,17 +35,17 @@ class IncomesRepositoryImpl : IncomesRepository {
             daoToModel(dao)
         }
 
-    override suspend fun get(userId: Int, id: Int): IncomeModel? =
+    override suspend fun get(accountId: Int, id: Int): IncomeModel? =
         newSuspendedTransaction(Dispatchers.IO) {
             IncomeDAO
-                .find { (IncomeTable.id eq id) and (IncomeTable.userId eq userId) }
+                .find { (IncomeTable.id eq id) and (IncomeTable.accountId eq accountId) }
                 .firstOrNull()?.let { daoToModel(it) }
         }
 
-    override suspend fun update(userId: Int, data: IncomeModel): IncomeModel =
+    override suspend fun update(accountId: Int, data: IncomeModel): IncomeModel =
         newSuspendedTransaction(Dispatchers.IO) {
             val dao = IncomeDAO
-                .find { (IncomeTable.id eq data.id) and (IncomeTable.userId eq userId) }
+                .find { (IncomeTable.id eq data.id) and (IncomeTable.accountId eq accountId) }
                 .firstOrNull() ?: throw NoSuchElementException("Income not found")
 
             dao.apply {
@@ -63,19 +63,19 @@ class IncomesRepositoryImpl : IncomesRepository {
             daoToModel(dao)
         }
 
-    override suspend fun delete(userId: Int, id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun delete(accountId: Int, id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
         val dao = IncomeDAO
-            .find { (IncomeTable.id eq id) and (IncomeTable.userId eq userId) }
+            .find { (IncomeTable.id eq id) and (IncomeTable.accountId eq accountId) }
             .firstOrNull()
 
         dao?.delete()
         dao != null
     }
 
-    override suspend fun existsByName(userId: Int, name: String): Boolean =
+    override suspend fun existsByName(accountId: Int, name: String): Boolean =
         newSuspendedTransaction(Dispatchers.IO) {
             IncomeDAO
-                .find { (IncomeTable.userId eq userId) and (IncomeTable.name eq name) }
+                .find { (IncomeTable.accountId eq accountId) and (IncomeTable.name eq name) }
                 .empty().not()
         }
 }

@@ -10,7 +10,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.javatime.*
 
 object ExpenseTable : IntIdTable("expenses") {
-    val userId = reference("user_id", UserTable)
+    val accountId = reference("account_id", AccountTable)
 
     val name = varchar("name", 100)
     val expenseType = enumerationByName("expense_type", 20, ExpenseType::class)
@@ -34,7 +34,7 @@ object ExpenseTable : IntIdTable("expenses") {
 class ExpenseDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<ExpenseDAO>(ExpenseTable)
 
-    var user by UserDAO referencedOn ExpenseTable.userId
+    var account by AccountDAO referencedOn ExpenseTable.accountId
 
     var name by ExpenseTable.name
     var expenseType by ExpenseTable.expenseType
@@ -57,7 +57,7 @@ class ExpenseDAO(id: EntityID<Int>) : IntEntity(id) {
 
 fun daoToModel(dao: ExpenseDAO) = ExpenseModel(
     id = dao.id.value,
-    userId = 0,
+    accountId = dao.account.id.value,
     name = dao.name,
     expenseType = dao.expenseType,
     value = dao.value,

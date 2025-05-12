@@ -1,5 +1,7 @@
 package com.eliasjuniornino.budgetplanner.database
 
+import com.eliasjuniornino.budgetplanner.dao.AccountTable
+import com.eliasjuniornino.budgetplanner.dao.AccountUserTable
 import com.eliasjuniornino.budgetplanner.getEnv
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.*
@@ -25,9 +27,11 @@ fun Application.configureDatabase() {
 
     transaction {
         SchemaUtils.createMissingTablesAndColumns(
+            AccountTable,
+            AccountUserTable,
             ExpenseCategoryTable,
-            IncomeCategoryTable,
             ExpenseTable,
+            IncomeCategoryTable,
             IncomeTable,
             UserTable
         )

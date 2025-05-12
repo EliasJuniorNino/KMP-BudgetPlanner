@@ -6,7 +6,8 @@ import com.eliasjuniornino.budgetplanner.utils.getCurrentLocalDateTime
 import java.time.LocalDateTime
 
 data class CreateExpenseModel(
-    val userId: Int,
+    var userId: Int,
+    var accountId: Int,
     var name: String,
     var expenseType: ExpenseType = ExpenseType.UNIQUE,
     var value: Double = 0.0,

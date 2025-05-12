@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.javatime.CurrentDateTime
 import org.jetbrains.exposed.sql.javatime.datetime
 
 object IncomeCategoryTable : IntIdTable("income_categories") {
-    val userId = reference("user_id", UserTable)
+    val accountId = reference("account_id", AccountTable)
     val parentId = reference("parent_id", IncomeCategoryTable).nullable()
 
     val name = varchar("name", 100)
@@ -22,7 +22,7 @@ object IncomeCategoryTable : IntIdTable("income_categories") {
 class IncomeCategoryDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<IncomeCategoryDAO>(IncomeCategoryTable)
 
-    var user by UserDAO referencedOn IncomeCategoryTable.userId
+    var account by AccountDAO referencedOn IncomeCategoryTable.accountId
     var parent by IncomeCategoryDAO optionalReferencedOn IncomeCategoryTable.parentId
 
     var name by IncomeCategoryTable.name
@@ -33,7 +33,7 @@ class IncomeCategoryDAO(id: EntityID<Int>) : IntEntity(id) {
 }
 
 fun daoToModel(dao: IncomeCategoryDAO) = IncomeCategoryModel(
-    userId = dao.user.id.value,
+    accountId = dao.account.id.value,
     parentId = dao.parent?.id?.value,
 
     id = dao.id.value,

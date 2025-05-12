@@ -57,7 +57,7 @@ class ExpensesControllerImpl(private val repository: ExpensesRepository) : Expen
         val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
         val newExpense = CreateExpenseModel(
-            userId = user.id,
+            accountId = user.id,
             name = request.name,
             expenseType = request.expenseType,
             value = request.value,

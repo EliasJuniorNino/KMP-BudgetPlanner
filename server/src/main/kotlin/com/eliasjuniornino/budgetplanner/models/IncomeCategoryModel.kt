@@ -5,7 +5,7 @@ import com.eliasjuniornino.budgetplanner.utils.getCurrentLocalDateTime
 import java.time.LocalDateTime
 
 data class IncomeCategoryModel(
-    var userId: Int,
+    var accountId: Int,
     val id: Int,
     var name: String,
     var color: String? = null,

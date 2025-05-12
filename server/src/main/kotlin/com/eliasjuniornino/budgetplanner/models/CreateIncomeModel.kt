@@ -5,6 +5,8 @@ import com.eliasjuniornino.budgetplanner.utils.getCurrentLocalDateTime
 import java.time.LocalDateTime
 
 data class CreateIncomeModel(
+    var userId: Int,
+    var accountId: Int,
     var name: String,
     var incomeType: IncomeType = IncomeType.SIMPLE,
     var value: Double = 0.0,

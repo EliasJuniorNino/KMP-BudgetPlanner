@@ -64,7 +64,7 @@ class IncomeCategoryControllerImpl(
         }
 
         val newCategory = CreateIncomeCategoryModel(
-            userId = user.id,
+            accountId = user.id,
             name = request.name!!,
             color = request.color,
             icon = request.icon,

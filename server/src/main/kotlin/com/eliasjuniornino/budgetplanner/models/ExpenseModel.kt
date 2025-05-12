@@ -8,7 +8,7 @@ import com.eliasjuniornino.budgetplanner.utils.getCurrentLocalDateTime
 
 data class ExpenseModel(
     val id: Int,
-    val userId: Int,
+    val accountId: Int,
     var name: String,
     var expenseType: ExpenseType = ExpenseType.UNIQUE,
     var value: Double = 0.0,

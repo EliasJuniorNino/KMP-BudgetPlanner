@@ -1,8 +1,9 @@
 package com.eliasjuniornino.budgetplanner.models
 
-data class BudgetAccountModel(
+data class AccountUserModel(
     val id: Int,
-    var name: String
+    val accountId: Int,
+    val userId: Int,
 ) {
     fun toDTO() = {}
 }

@@ -4,31 +4,34 @@ import com.eliasjuniornino.budgetplanner.models.ExpenseCategoryModel
 import com.eliasjuniornino.budgetplanner.models.CreateExpenseCategoryModel
 import com.eliasjuniornino.budgetplanner.dao.ExpenseCategoryDAO
 import com.eliasjuniornino.budgetplanner.dao.ExpenseCategoryTable
-import com.eliasjuniornino.budgetplanner.dao.UserDAO
+import com.eliasjuniornino.budgetplanner.dao.AccountDAO
 import com.eliasjuniornino.budgetplanner.dao.daoToModel
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class ExpenseCategoriesRepositoryImpl : ExpenseCategoriesRepository {
-    override suspend fun list(userId: Int): List<ExpenseCategoryModel> =
+    override suspend fun list(accountId: Int): List<ExpenseCategoryModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             ExpenseCategoryDAO
-                .find { (ExpenseCategoryTable.userId eq userId) and (ExpenseCategoryTable.parentId eq null) }
+                .find { (ExpenseCategoryTable.accountId eq accountId) and (ExpenseCategoryTable.parentId eq null) }
                 .map { daoToModel(it) }
         }
 
-    override suspend fun list(userId: Int, parentCategoryId: Int): List<ExpenseCategoryModel> =
+    override suspend fun list(accountId: Int, parentCategoryId: Int): List<ExpenseCategoryModel> =
         newSuspendedTransaction(Dispatchers.IO) {
             ExpenseCategoryDAO
-                .find { (ExpenseCategoryTable.userId eq userId) and (ExpenseCategoryTable.parentId eq parentCategoryId) }
+                .find { (ExpenseCategoryTable.accountId eq accountId) and (ExpenseCategoryTable.parentId eq parentCategoryId) }
                 .map { daoToModel(it) }
         }
 
-    override suspend fun store(userId: Int, data: CreateExpenseCategoryModel): ExpenseCategoryModel =
+    override suspend fun store(
+        accountId: Int,
+        data: CreateExpenseCategoryModel
+    ): ExpenseCategoryModel =
         newSuspendedTransaction(Dispatchers.IO) {
             val category = ExpenseCategoryDAO.new {
-                user = UserDAO[userId]
+                account = AccountDAO[accountId]
                 name = data.name
                 color = data.color
                 icon = data.icon
@@ -37,17 +40,20 @@ class ExpenseCategoriesRepositoryImpl : ExpenseCategoriesRepository {
             daoToModel(category)
         }
 
-    override suspend fun get(userId: Int, categoryId: Int): ExpenseCategoryModel? =
+    override suspend fun get(accountId: Int, categoryId: Int): ExpenseCategoryModel? =
         newSuspendedTransaction(Dispatchers.IO) {
             ExpenseCategoryDAO
-                .find { (ExpenseCategoryTable.userId eq userId) and (ExpenseCategoryTable.id eq categoryId) }
+                .find {
+                    (ExpenseCategoryTable.accountId eq accountId) and
+                    (ExpenseCategoryTable.id eq categoryId)
+                }
                 .firstOrNull()?.let { daoToModel(it) }
         }
 
-    override suspend fun update(userId: Int, data: ExpenseCategoryModel): ExpenseCategoryModel =
+    override suspend fun update(accountId: Int, data: ExpenseCategoryModel): ExpenseCategoryModel =
         newSuspendedTransaction(Dispatchers.IO) {
             val category = ExpenseCategoryDAO
-                .find { (ExpenseCategoryTable.userId eq userId) and (ExpenseCategoryTable.id eq data.id) }
+                .find { (ExpenseCategoryTable.accountId eq accountId) and (ExpenseCategoryTable.id eq data.id) }
                 .firstOrNull() ?: throw NoSuchElementException("Category not found")
 
             category.name = data.name
@@ -58,10 +64,10 @@ class ExpenseCategoriesRepositoryImpl : ExpenseCategoriesRepository {
             daoToModel(category)
         }
 
-    override suspend fun delete(userId: Int, categoryId: Int): Boolean =
+    override suspend fun delete(accountId: Int, categoryId: Int): Boolean =
         newSuspendedTransaction(Dispatchers.IO) {
             val category = ExpenseCategoryDAO
-                .find { (ExpenseCategoryTable.userId eq userId) and (ExpenseCategoryTable.id eq categoryId) }
+                .find { (ExpenseCategoryTable.accountId eq accountId) and (ExpenseCategoryTable.id eq categoryId) }
                 .firstOrNull()
 
             if (category != null) {
@@ -72,10 +78,10 @@ class ExpenseCategoriesRepositoryImpl : ExpenseCategoriesRepository {
             }
         }
 
-    override suspend fun existsByName(userId: Int, name: String): Boolean =
+    override suspend fun existsByName(accountId: Int, name: String): Boolean =
         newSuspendedTransaction(Dispatchers.IO) {
             ExpenseCategoryDAO
-                .find { (ExpenseCategoryTable.userId eq userId) and (ExpenseCategoryTable.name eq name) }
+                .find { (ExpenseCategoryTable.accountId eq accountId) and (ExpenseCategoryTable.name eq name) }
                 .firstOrNull() != null
         }
 }

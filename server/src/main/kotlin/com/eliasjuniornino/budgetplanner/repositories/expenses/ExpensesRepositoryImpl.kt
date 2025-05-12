@@ -1,8 +1,8 @@
 package com.eliasjuniornino.budgetplanner.repositories.expenses
 
+import com.eliasjuniornino.budgetplanner.dao.AccountDAO
 import com.eliasjuniornino.budgetplanner.dao.ExpenseDAO
 import com.eliasjuniornino.budgetplanner.dao.ExpenseTable
-import com.eliasjuniornino.budgetplanner.dao.UserDAO
 import com.eliasjuniornino.budgetplanner.dao.daoToModel
 import com.eliasjuniornino.budgetplanner.models.CreateExpenseModel
 import com.eliasjuniornino.budgetplanner.models.ExpenseModel
@@ -12,16 +12,16 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 
 class ExpensesRepositoryImpl : ExpensesRepository {
 
-    override suspend fun list(userId: Int): List<ExpenseModel> = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun list(accountId: Int): List<ExpenseModel> = newSuspendedTransaction(Dispatchers.IO) {
         ExpenseDAO
-            .find { ExpenseTable.userId eq userId }
+            .find { ExpenseTable.accountId eq accountId }
             .map { daoToModel(it) }
     }
 
-    override suspend fun store(userId: Int, data: CreateExpenseModel): ExpenseModel =
+    override suspend fun store(accountId: Int, data: CreateExpenseModel): ExpenseModel =
         newSuspendedTransaction(Dispatchers.IO) {
             val dao = ExpenseDAO.new {
-                this.user = UserDAO[userId]
+                this.account = AccountDAO[accountId]
                 this.name = data.name
                 this.expenseType = data.expenseType
                 this.value = data.value
@@ -43,16 +43,16 @@ class ExpensesRepositoryImpl : ExpensesRepository {
             daoToModel(dao)
         }
 
-    override suspend fun get(userId: Int, id: Int): ExpenseModel? = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun get(accountId: Int, id: Int): ExpenseModel? = newSuspendedTransaction(Dispatchers.IO) {
         ExpenseDAO
-            .find { (ExpenseTable.id eq id) and (ExpenseTable.userId eq userId) }
+            .find { (ExpenseTable.id eq id) and (ExpenseTable.accountId eq accountId) }
             .firstOrNull()?.let { daoToModel(it) }
     }
 
-    override suspend fun update(userId: Int, data: ExpenseModel): ExpenseModel =
+    override suspend fun update(accountId: Int, data: ExpenseModel): ExpenseModel =
         newSuspendedTransaction(Dispatchers.IO) {
             val dao = ExpenseDAO
-                .find { (ExpenseTable.id eq data.id) and (ExpenseTable.userId eq userId) }
+                .find { (ExpenseTable.id eq data.id) and (ExpenseTable.accountId eq accountId) }
                 .firstOrNull() ?: throw NoSuchElementException("Expense not found")
 
             dao.apply {
@@ -78,18 +78,18 @@ class ExpensesRepositoryImpl : ExpensesRepository {
             daoToModel(dao)
         }
 
-    override suspend fun delete(userId: Int, id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun delete(accountId: Int, id: Int): Boolean = newSuspendedTransaction(Dispatchers.IO) {
         val dao = ExpenseDAO
-            .find { (ExpenseTable.id eq id) and (ExpenseTable.userId eq userId) }
+            .find { (ExpenseTable.id eq id) and (ExpenseTable.accountId eq accountId) }
             .firstOrNull()
 
         dao?.delete()
         dao != null
     }
 
-    override suspend fun existsByName(userId: Int, name: String): Boolean = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun existsByName(accountId: Int, name: String): Boolean = newSuspendedTransaction(Dispatchers.IO) {
         ExpenseDAO
-            .find { (ExpenseTable.userId eq userId) and (ExpenseTable.name eq name) }
+            .find { (ExpenseTable.accountId eq accountId) and (ExpenseTable.name eq name) }
             .empty()
             .not()
     }

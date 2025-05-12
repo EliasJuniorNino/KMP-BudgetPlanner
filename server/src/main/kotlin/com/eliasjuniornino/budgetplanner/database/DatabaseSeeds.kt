@@ -1,5 +1,6 @@
 package com.eliasjuniornino.budgetplanner.database
 
+import com.eliasjuniornino.budgetplanner.dao.AccountTable
 import com.eliasjuniornino.budgetplanner.dto.expenses.ExpenseType
 import com.eliasjuniornino.budgetplanner.dto.expenses.FrequencyType
 import com.eliasjuniornino.budgetplanner.models.CreateExpenseCategoryModel
@@ -26,15 +27,13 @@ fun seedDatabase() {
                 it[name] = "Wellinton"
                 it[password] = "senha123"
             }.value
-            val cleuId = UserTable.insertAndGetId {
-                it[email] = "cleusa@example.com"
-                it[name] = "Cleusa"
-                it[password] = "senha123"
+            val accountId = AccountTable.insertAndGetId {
+                it[name] = "Casa"
             }.value
 
             // Expense Category
             val expenseId = ExpenseCategoryTable.insertAndGetId {
-                it[userId] = userId
+                it[ExpenseCategoryTable.accountId] = accountId
                 it[name] = "Alimentação"
                 it[color] = "#000000"
             }.value
@@ -47,7 +46,7 @@ fun seedDatabase() {
                 CreateExpenseCategoryModel(eliasId, "Educação", "#FF0000"),
                 CreateExpenseCategoryModel(eliasId, "Saude", "#FF0000"),
             )) { category ->
-                this[ExpenseCategoryTable.userId] = category.userId
+                this[ExpenseCategoryTable.accountId] = category.accountId
                 this[ExpenseCategoryTable.name] = category.name
                 this[ExpenseCategoryTable.color] = category.color
                 this[ExpenseCategoryTable.parentId] = category.parentId
@@ -58,7 +57,7 @@ fun seedDatabase() {
                 CreateExpenseCategoryModel(eliasId, "Salario", "#000000"),
                 CreateExpenseCategoryModel(eliasId, "Renda Extra", "#000000")
             )) { category ->
-                this[ExpenseCategoryTable.userId] = category.userId
+                this[ExpenseCategoryTable.accountId] = category.accountId
                 this[ExpenseCategoryTable.name] = category.name
                 this[ExpenseCategoryTable.color] = category.color
             }
@@ -104,7 +103,7 @@ fun seedDatabase() {
                 CreateExpenseModel(eliasId, "Água", value = 300.0),
                 CreateExpenseModel(eliasId, "Aluguel", value = 1500.0),
             )) { category ->
-                this[ExpenseTable.userId] = category.userId
+                this[ExpenseTable.accountId] = category.accountId
                 this[ExpenseTable.name] = category.name
                 this[ExpenseTable.expenseType] = category.expenseType
                 this[ExpenseTable.categoryId] = category.categoryId

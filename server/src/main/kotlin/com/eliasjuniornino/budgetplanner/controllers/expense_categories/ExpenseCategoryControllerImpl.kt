@@ -64,7 +64,7 @@ class ExpenseCategoryControllerImpl(
         }
 
         val newCategory = CreateExpenseCategoryModel(
-            userId = user.id,
+            accountId = user.id,
             name = request.name!!,
             color = request.color,
             icon = request.icon,
