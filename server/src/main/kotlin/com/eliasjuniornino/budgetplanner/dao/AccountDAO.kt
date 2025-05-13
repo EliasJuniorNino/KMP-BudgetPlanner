@@ -8,7 +8,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.javatime.CurrentDateTime
 import org.jetbrains.exposed.sql.javatime.datetime
 
-object AccountTable : IntIdTable("budget_account") {
+object AccountTable : IntIdTable("accounts") {
     val name = varchar("name", 100)
     val userId = reference("user_id", UserTable)
     val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)

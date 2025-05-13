@@ -8,6 +8,8 @@ import io.ktor.server.routing.*
 import io.ktor.http.*
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.*
+import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 fun RoutingContext.getAuthenticatedUser(): UserModel? {
     return try {
@@ -34,13 +36,17 @@ suspend fun RoutingContext.getAccountOrRespondError(message: String? = null): Ac
         return null
     }
 
-    val account = AccountDAO.findById(accountId)
+    val account = newSuspendedTransaction(Dispatchers.IO) {
+        val account = AccountDAO.findById(accountId) ?: return@newSuspendedTransaction null
+        return@newSuspendedTransaction daoToModel(account)
+    }
+
     if (account == null) {
         call.respond(HttpStatusCode.NotFound, mapOf("message" to (message ?: "Account not found")))
         return null
     }
 
-    return daoToModel(account)
+    return account
 }
 
 suspend fun ApplicationCall.getValidIdOrRespondError(message: String? = null): Int? {

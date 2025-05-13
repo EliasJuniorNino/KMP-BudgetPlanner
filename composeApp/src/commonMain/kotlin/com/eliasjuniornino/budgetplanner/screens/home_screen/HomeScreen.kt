@@ -11,11 +11,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import com.eliasjuniornino.budgetplanner.screens.home_screen.tabs.expenses_tab.ExpensesTab
 import com.eliasjuniornino.budgetplanner.screens.home_screen.tabs.incomes_tab.IncomesTab
 import com.eliasjuniornino.budgetplanner.screens.home_screen.tabs.home_tab.HomeTab
@@ -24,6 +20,7 @@ import com.eliasjuniornino.budgetplanner.screens.home_screen.tabs.home_tab.HomeT
 fun HomeScreen(
     viewModel: HomeScreenViewModel
 ) {
+    val user by viewModel.user.collectAsState()
     var selectedTab by remember { mutableIntStateOf(0) }
 
     val tabsNames = listOf(
@@ -62,10 +59,12 @@ fun HomeScreen(
                 }
             }
         ) { innerPadding ->
-            when (selectedTab) {
-                0 -> HomeTab(viewModel, innerPadding)
-                1 -> IncomesTab(viewModel, innerPadding)
-                2 -> ExpensesTab(viewModel, innerPadding)
+            if (user != null) {
+                when (selectedTab) {
+                    0 -> HomeTab(viewModel, innerPadding)
+                    1 -> IncomesTab(viewModel, innerPadding)
+                    2 -> ExpensesTab(viewModel, innerPadding)
+                }
             }
         }
     }

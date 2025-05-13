@@ -6,7 +6,9 @@ import com.eliasjuniornino.budgetplanner.getAppConfigJWT
 import com.eliasjuniornino.budgetplanner.repositories.users.UsersRepositoryImpl
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.eliasjuniornino.budgetplanner.dto.auth.AuthLoginReturnDTO
 import com.eliasjuniornino.budgetplanner.models.CreateUserModel
+import com.eliasjuniornino.budgetplanner.repositories.accounts.AccountsRepositoryImpl
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -17,6 +19,7 @@ import java.util.*
 fun Route.getAuthRoutes() {
     val appConfigJWT = application.getAppConfigJWT()
     val usersRepository = UsersRepositoryImpl()
+    val accountsRepository = AccountsRepositoryImpl()
 
     route("/auth") {
         post("/login") {
@@ -28,6 +31,8 @@ fun Route.getAuthRoutes() {
                 return@post
             }
 
+            val accounts = accountsRepository.list(user.id)
+
             val token = JWT.create()
                 .withAudience(appConfigJWT.jwtAudience)
                 .withIssuer(appConfigJWT.jwtIssuer)
@@ -35,7 +40,11 @@ fun Route.getAuthRoutes() {
                 .withExpiresAt(Date(System.currentTimeMillis() + appConfigJWT.jwtTokenTime))
                 .sign(Algorithm.HMAC256(appConfigJWT.jwtSecret))
 
-            call.respond(mapOf("token" to token))
+            call.respond(AuthLoginReturnDTO(
+                token = token,
+                user = user.toDTO(),
+                accounts = accounts.map { it.toDTO() }
+            ))
         }
 
         post("/signup") {

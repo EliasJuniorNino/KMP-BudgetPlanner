@@ -4,17 +4,19 @@ import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
-import io.ktor.client.request.header
-import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 
 object AppHttpClient {
     private var client: HttpClient? = null
     private var token: String? = null
+    private var accountId: Int? = null
 
     fun setToken(newTokenValue: String) {
         token = newTokenValue
-        client = createClient()
+    }
+
+    fun setAccountId(newAccountId: Int) {
+        accountId = newAccountId
     }
 
     fun getClient(): HttpClient {
@@ -36,9 +38,8 @@ object AppHttpClient {
                 level = LogLevel.ALL
             }
             install(DefaultRequest) {
-                token?.let {
-                    headers.append("Authorization", "Bearer $it")
-                }
+                token?.let { headers.append("Authorization", "Bearer $it") }
+                accountId?.let { headers.append("account_id", "$accountId") }
             }
         }
     }

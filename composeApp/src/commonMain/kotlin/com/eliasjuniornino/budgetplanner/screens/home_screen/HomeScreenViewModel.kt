@@ -1,5 +1,7 @@
 package com.eliasjuniornino.budgetplanner.screens.home_screen
 
+import com.eliasjuniornino.budgetplanner.AppHttpClient
+import com.eliasjuniornino.budgetplanner.dto.accounts.AccountDTO
 import com.eliasjuniornino.budgetplanner.dto.auth.AuthLoginDTO
 import com.eliasjuniornino.budgetplanner.dto.auth.AuthSignupDTO
 import com.eliasjuniornino.budgetplanner.dto.dashboard.AIResumeDTO
@@ -58,8 +60,14 @@ class HomeScreenViewModel(
     private val _user = MutableStateFlow<UserDTO?>(null)
     val user = _user.asStateFlow()
 
+    private val _accounts = MutableStateFlow<List<AccountDTO>?>(null)
+    val accounts = _accounts.asStateFlow()
+
+    private val _selectedAccount = MutableStateFlow<AccountDTO?>(null)
+    val selectedAccount = _selectedAccount.asStateFlow()
+
     init {
-        doLogin("user@email.com", "senha123")
+        doLogin("elias@example.com", "senha123")
     }
 
     fun doLogin(email: String, password: String) {
@@ -70,8 +78,15 @@ class HomeScreenViewModel(
                     email = email,
                     password = password
                 )
-                userRepository.doLogin(loginBody)
-                _user.value = userRepository.getUser()
+                val loginReturnDTO = userRepository.doLogin(loginBody)
+                AppHttpClient.setToken(loginReturnDTO.token)
+                _user.value = loginReturnDTO.user
+                _accounts.value = loginReturnDTO.accounts
+                if (loginReturnDTO.accounts.isNotEmpty()) {
+                    val selectedAccount = loginReturnDTO.accounts.first()
+                    _selectedAccount.value = selectedAccount
+                    AppHttpClient.setAccountId(selectedAccount.id)
+                }
             }
         } catch (_: Exception) {
 

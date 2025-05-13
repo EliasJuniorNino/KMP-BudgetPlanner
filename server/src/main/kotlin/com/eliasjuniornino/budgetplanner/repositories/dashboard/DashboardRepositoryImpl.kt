@@ -1,5 +1,8 @@
 package com.eliasjuniornino.budgetplanner.repositories.dashboard
 
+import com.eliasjuniornino.budgetplanner.dao.ExpenseCategoryTable
+import com.eliasjuniornino.budgetplanner.dao.ExpenseTable
+import com.eliasjuniornino.budgetplanner.dao.IncomeTable
 import com.eliasjuniornino.budgetplanner.models.AIResumeModel
 import com.eliasjuniornino.budgetplanner.models.ExpenseByCategoryModel
 import com.eliasjuniornino.budgetplanner.models.WalletResumeModel
@@ -12,15 +15,16 @@ class DashboardRepositoryImpl() : DashboardRepository {
         val query = """
                 SELECT
                     (SELECT SUM(e.value * e.value_multiplier)
-                     FROM expenses e
+                     FROM ${ExpenseTable.tableName} e
                      WHERE e.user_id = ?) AS total_expenses,
 
                     (SELECT SUM(i.value * i.value_multiplier)
-                     FROM incomes i
+                     FROM ${IncomeTable.tableName} i
                      WHERE i.user_id = ?) AS total_incomes
                 """.trimIndent()
         val args = listOf(
-            IntegerColumnType() to accountId, IntegerColumnType() to accountId
+            IntegerColumnType() to accountId,
+            IntegerColumnType() to accountId
         )
 
         val walletResumeModel = WalletResumeModel(
@@ -53,11 +57,11 @@ class DashboardRepositoryImpl() : DashboardRepository {
                         c.id AS category_id,
                         SUM(e.value * e.value_multiplier) AS total,
                         SUM(e.value * e.value_multiplier) / NULLIF(t.total_sum, 0) * 100 AS percent
-                    FROM expenses e
-                    JOIN expense_categories c ON e.category_id = c.id
+                    FROM ${ExpenseTable.tableName} e
+                    JOIN ${ExpenseCategoryTable.tableName} c ON e.category_id = c.id
                     JOIN (
                         SELECT SUM(value * value_multiplier) AS total_sum
-                        FROM expenses
+                        FROM ${ExpenseTable.tableName}
                         WHERE account_id = ?
                     ) t ON 1=1
                     WHERE e.account_id = ?
@@ -70,10 +74,10 @@ class DashboardRepositoryImpl() : DashboardRepository {
                         NULL AS category_id,
                         SUM(e.value * e.value_multiplier) AS total,
                         SUM(e.value * e.value_multiplier) / NULLIF(t.total_sum, 0) * 100 AS percent
-                    FROM expenses e
+                    FROM ${ExpenseTable.tableName} e
                     JOIN (
                         SELECT SUM(value * value_multiplier) AS total_sum
-                        FROM expenses
+                        FROM ${ExpenseTable.tableName}
                         WHERE account_id = ?
                     ) t ON 1=1
                     WHERE e.account_id = ? AND e.category_id IS NULL
